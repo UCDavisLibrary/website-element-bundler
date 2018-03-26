@@ -1,15 +1,31 @@
 {
-  "name": "@ucd-lib/website-shared-elements",
+  "name": "@ucd-lib/website-element-bundler",
   "version": "0.0.1",
+  "description": "create webcomponent bundles for library website",
   "main": "index.js",
-  "license": "MIT",
-  "flat": true,
-  "dependencies": {
-    "@polymer/iron-media-query": "^3.0.0-pre.12",
-    "@polymer/iron-pages": "^3.0.0-pre.12",
-    "@polymer/polymer": "^3.0.0-pre.12"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --config webpack-watch.config.js --watch",
+    "dist": "webpack --config webpack-dist.config.js"
   },
-  "resolutions": {
-    "@polymer/polymer": "3.0.0-pre.12"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UCDavisLibrary/website-element-bundler.git"
+  },
+  "keywords": [
+    "webpack",
+    "babel",
+    "polymer"
+  ],
+  "author": "jrmerz@ucdavis.edu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/UCDavisLibrary/website-element-bundler/issues"
+  },
+  "homepage": "https://github.com/UCDavisLibrary/website-element-bundler#readme",
+  "dependencies": {
+    "@ucd-lib/cork-app-build": "0.0.2",
+    "webpack": "^4.2.0",
+    "webpack-cli": "^2.0.13"
   }
 }

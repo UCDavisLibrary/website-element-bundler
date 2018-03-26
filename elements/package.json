@@ -1,0 +1,10 @@
+{
+  "name": "@ucd-lib/ucd-website-elements",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "flat": true,
+  "dependencies": {
+    "@ucd-lib/ucd-library-search": "UCDavisLibrary/ucd-library-search#pv3"
+  }
+}
