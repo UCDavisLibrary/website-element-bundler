@@ -1,0 +1,17 @@
+<div class="text">
+  <h1 class="title">Site Search</h1>
+  <div class="help">Search library web pages for resources such as research guides, manuscripts and archives, services, and people.</div>
+
+  <div class="layout">
+    <div class="flex">
+      <input type="text" id="input" placeholder="Search Website" on-keyup="_onKeyUp" />
+    </div>
+    <div>
+      <button class="search-btn" id="btn" on-click="_search">Search</button>
+    </div>
+  </div>
+
+  <div hidden="[[!showFilter]]" style="margin-top: 15px; font-size: 14px">
+    <span style="color:#666">Filtered by: </span> <b style="color: #333">[[filterValue]]</b> | <a id="btn2" on-click="_search">Remove Filter</a>
+  </div>
+</div>

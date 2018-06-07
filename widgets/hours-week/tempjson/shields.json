@@ -1,0 +1,9 @@
+[{"ajax_id": "lib_shields",
+    "url":"https://www.googleapis.com/calendar/v3/calendars/ucdavis.edu_3dtim9248ptf2af2jfpqi6q4fc@group.calendar.google.com/events",
+    "params": {"key": "AIzaSyBv6RYrZ50nq02NgEhkdXNCqXB-QCt2QtM", "maxResults":"2500"},
+    "event_series": [{"title": "Peter J. Shields", "search_term": "shields_main", "type": "library", "url": ""},
+        {"title": "2nd Floor Consulting Desk", "search_term": "second_floor_desk", "type": "department", "url": "https://www.beta.library.ucdavis.edu/service/researchsupport/"},
+        {"title": "24 Hour Study Room", "search_term": "reading_room", "type": "department", "url": "https://beta.library.ucdavis.edu/service/24-hour-study-space/"},
+        {"title": "Special Collections", "search_term": "spe_col", "type": "department", "url": "https://beta.library.ucdavis.edu/special-collections"}]
+    }
+]

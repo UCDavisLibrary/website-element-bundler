@@ -1,0 +1,45 @@
+<style>
+  :host, ucd-library-search {
+    text-align: left;
+    max-width: 1200px;
+    display: block;
+    padding: 15px;
+    min-width: 275px;
+  }
+
+  /* @media(min-width: 900px) {
+    :host, .ucd-library-search {
+      padding: 20px;
+    }
+  } */
+
+  .ucd-library-search [padded] {
+    padding-left: 50px
+  }
+
+  .ucd-library-search iron-pages > * {
+    display: block;
+
+    -webkit-animation:bounceIn 400ms ease-out;
+    -ms-animation:bounceIn 400ms ease-out;
+    animation:bounceIn 400ms ease-out;
+  }
+</style>
+
+<iron-media-query query="min-width: 800px" query-matches="{{largeScreen}}"></iron-media-query>
+
+<div class="ucd-library-search" layout$="[[largeScreen]]">
+  <ucd-library-search-nav id="nav" selected="{{section}}" ></ucd-library-search-nav>
+
+  <div flex$="[[largeScreen]]" padded$="[[largeScreen]]">
+    <iron-pages selected="{{section}}" attr-for-selected="id">
+      <ucd-library-search-catalog id="library"></ucd-library-search-catalog>
+      <ucd-library-search-databases id="databases" popular-databases="[[popularDatabases]]" root-url$="[[rootUrl]]"></ucd-library-search-databases>
+      <ucd-library-search-guide id="guide" root-url$="[[rootUrl]]"></ucd-library-search-guide>
+      <ucd-library-search-courses id="courses"></ucd-library-search-courses>
+      <ucd-library-search-melvyl id="melvyl" root-url$="[[rootUrl]]"></ucd-library-search-melvyl>
+      <ucd-library-search-website id="website" root-url$="[[rootUrl]]"></ucd-library-search-website>
+    </iron-pages>
+  </div>
+</div>
+    

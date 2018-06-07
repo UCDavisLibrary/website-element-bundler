@@ -1,30 +1,36 @@
 const path = require('path');
-const entries = require('./entries');
+const BUILD_IE = true;
 
-let config = require('@ucd-lib/cork-app-build').watch({
+let configs = require('@ucd-lib/cork-app-build').watch({
   root : __dirname,
-  entry : '@ucd-lib/ucd-library-search/ucd-library-search',
-  preview : 'preview',
-  clientModules : 'elements/node_modules',
-  modern : '[name].bundle.js'
-});
+  entry : '',
+  preview : 'preview/lib',
+  clientModules : 'widgets/node_modules',
+  modern : '[name].bundle.js',
+  ie : '[name].ie-bundle.js'
+}, BUILD_IE);
 
-// local test
-entries.test = path.join(__dirname, 'test-widget')
-config.resolve.modules.push(path.join(__dirname, 'test-widget', 'node_modules'));
+if( !Array.isArray(configs) ) {
+  configs = [configs];
+} 
 
-config.entry = entries;
+configs.forEach(config => {
+  config.entry = require('./webpack-widgets.js');
+  for( let key in config.entry ) {
+    config.entry[key] = path.resolve(__dirname, config.entry[key]);
+  }
 
-config.optimization = {
-  splitChunks: {
-    cacheGroups: {
-      commons: {
-        test: /[\\/]node_modules[\\/]/,
-        name: "vendor",
-        chunks: "all"
+  config.optimization = {
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendor",
+          chunks: "all"
+        }
       }
     }
   }
-}
+});
 
-module.exports = config;
+module.exports = configs;

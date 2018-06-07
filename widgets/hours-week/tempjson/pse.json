@@ -1,0 +1,6 @@
+[{"ajax_id": "lib_pse",
+        "url":"https://www.googleapis.com/calendar/v3/calendars/ucdavis.edu_j9puvf3qfd2jcj86vpq5nqjmlg@group.calendar.google.com/events",
+        "params": {"key": "AIzaSyBv6RYrZ50nq02NgEhkdXNCqXB-QCt2QtM", "maxResults":"2500"},
+        "event_series": [{"title": "Physical Sciences & Engineering Library", "search_term": "pse_main", "type": "library", "url": ""}]
+    }
+]

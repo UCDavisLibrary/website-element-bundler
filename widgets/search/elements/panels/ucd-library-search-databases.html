@@ -1,0 +1,74 @@
+
+<style>
+  .ucd-library-search-databases .popular {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .ucd-library-search-databases .popular > * {
+    margin: 0 5px 0 0;
+  }
+
+  .ucd-library-search-databases .popular div span[last-child] {
+    display: none;
+  }
+
+  .ucd-library-search-databases .bottom {
+    margin: 15px 0 0 0;
+    display: flex;
+    align-items: flex-start;
+    white-space: nowrap;
+    font-weight: var(--default-font-weight);
+  }
+
+  .ucd-library-search-databases .break {
+    margin: 0 10px;
+  }
+
+  @media( max-width: 600px ) {
+    .ucd-library-search-databases .bottom {
+      display: block;
+    }
+    .ucd-library-search-databases .bottom :first-child {
+      margin-left: 0;
+    }
+    .ucd-library-search-databases .break {
+      display: none;
+    }
+    .ucd-library-search-databases .popular {
+      margin-top: 10px;
+      margin-left: 0;
+    }
+  }
+</style>
+
+<div class="ucd-library-search-databases">
+  <div class="text" flat$="[[flat]]">
+    <h1 class="title">Databases</h1>
+    <div class="help">Find databases for scholarly articles, newspapers, popular literature, properties, statistics, images, dissertations and more.</div>
+
+    <div class="layout">
+      <div class="flex">
+        <input id="input" type="text" placeholder="Search For Databases" on-keyup="_onKeyUp" />
+      </div>
+      <div>
+        <button class="search-btn" id="btn" on-click="_search">Search</button>
+      </div>
+    </div>
+  </div>
+
+  <div flat$="[[flat]]" class="bottom">
+    <div><a href="/database/">Browse A-Z</a></div>
+    <div class="break">|</div>
+
+    <div class="popular">
+      <div>Popular:</div>
+      <template is="dom-repeat" items="[[databases]]">
+          <div>
+            <a href$="[[item.url]]" on-click="setOutboundEvent">[[item.label]]</a><span last-child$="[[item.last]]">,</span>
+          </div>
+      </template>
+    </div>
+  </div>
+</div>

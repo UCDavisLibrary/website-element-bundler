@@ -1,0 +1,94 @@
+<style>
+  :host, ucd-library-search-nav {
+    display: block;
+  }
+
+  .ucd-library-search-nav div.btn-nav button {
+    border-radius: 0px;
+    font-weight: var(--default-font-weight);
+    margin: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--default-primary-color);
+    display: block;
+    float: left;
+    height: 65px;
+    width: 80px;
+    border: solid 1px var(--default-primary-yellow);
+    background: var(--default-secondary-yellow);
+    padding: 0px 5px;
+    transition: background 400ms ease-out, transform 400ms ease-out;
+    transform: scale(1);
+  }
+
+  .ucd-library-search-nav div.btn-nav button.selected:focus, 
+  .ucd-library-search-nav div.btn-nav button.selected:hover {
+    border: solid 2px var(--default-primary-color);
+    padding: 4px;
+    outline:0;
+  }
+  .ucd-library-search-nav div.btn-nav button:focus, 
+  .ucd-library-search-nav div.btn-nav button:hover {
+    border: solid 2px var(--default-primary-color);
+    color: var(--default-primary-color);
+    background: var(--default-secondary-yellow);
+    padding: 4px;
+    outline:0;
+  }
+
+  .ucd-library-search-nav div.btn-nav button.selected {
+    transform: scale(1.05);
+    border: solid 1px var(--default-primary-color);
+    padding: 0px 5px;
+    background: var(--default-secondary-color);
+    color: white;
+    text-shadow: none;
+    z-index: 20;
+  }
+
+  @media(min-width: 700px) {
+    .ucd-library-search-nav div.btn-nav button {
+      font-size: var(--default-font-size);
+      height: 80px;
+      width: 95px;
+    }
+  }
+
+  @media(min-width: 900px) {
+    .ucd-library-search-nav div.btn-nav button {
+      font-size: var(--default-font-size);
+      height: 90px;
+      width: 120px;
+    }
+  }
+</style>
+
+<iron-media-query query="min-width: 800px" query-matches="{{largeScreen}}"></iron-media-query>
+<iron-media-query query="max-width: 600px" query-matches="{{smallScreen}}"></iron-media-query>
+
+<div class="ucd-library-search-nav">
+  <div hidden$="[[!smallScreen]]">
+    <h2>Search...</h2>
+    <select id="selector" on-change="_select" style="display:block; margin-bottom: 20px">
+      <option value="library">Library Catalog + Articles</option>
+      <option value="courses">Course Reserves</option>
+      <option value="databases">Databases</option>
+      <option value="melvyl">Melvyl</option>
+      <option value="guide">Subject + Course Guides</option>
+      <option value="website">Site Search</option>
+    </select>
+  </div>
+
+  <div class="btn-nav" layout$="[[!largeScreen]]" hidden$="[[smallScreen]]" flat$="[[flat]]">
+    <div class="layout">
+      <button on-click="_select" value="library"><div>Library Catalog + Articles</div></button>
+      <button on-click="_select" value="courses"><div>Course Reserves</div></button>
+      <button on-click="_select" value="databases"><div>Databases</div></button>
+    </div>
+    <div class="layout center">
+      <button on-click="_select" value="melvyl"><div>All UC Libraries (Melvyl)</div></button>
+      <button on-click="_select" value="guide"><div>Subject + Course Guides</div></button>
+      <button on-click="_select" value="website"><div>Site Search</div></button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+<div class="text">
+  <h1 class="title">Subject and Course Guides</h1>
+  <div class="help">Find article databases, ebooks, handbooks, properties and other resources by academic subject.</div>
+
+  <div class="layout">
+    <div class="flex">
+      <input id="input" type="text" placeholder="Search Subject and Course Guides" on-keyup="_onKeyUp" />
+    </div>
+    <div>
+      <button class="search-btn" id="btn" on-click="_search">Search</button>
+    </div>
+  </div>
+  <div style="padding: 5px 0">
+    <a href="/course-guides" type="course" on-click="_onBrowse">All Course Guides</a> | 
+    <a href="/browse-subjects" type="subject" on-click="_onBrowse">All Subject Guides</a>
+  </div>
+</div>
+

@@ -1,0 +1,6 @@
+[{"ajax_id": "lib_mabie",
+        "url":"https://www.googleapis.com/calendar/v3/calendars/ucdavis.edu_d2ss1cvm1l5jepr3vorqfh56h4@group.calendar.google.com/events",
+        "params": {"key": "AIzaSyBv6RYrZ50nq02NgEhkdXNCqXB-QCt2QtM", "maxResults":"2500"},
+        "event_series": [{"title": "Mabie Law Library", "search_term": "mabie_main", "type": "library", "url": ""}]
+    }
+]

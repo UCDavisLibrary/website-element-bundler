@@ -1,0 +1,65 @@
+<style>
+  /*hack for website layout */
+  .ucd-library-search-catalog input[type="checkbox"] {
+    width: auto
+  }
+
+  .ucd-library-search-catalog label {
+    display: inline-block !important;
+    margin-top: 5px !important;
+  }
+
+  @media(max-width: 1200px) {
+    .ucd-library-search-catalog .weight-one {
+      display: block;
+    }
+    .ucd-library-search-catalog .weight-one.break {
+      display: none;
+    }
+  }
+
+  @media(max-width: 1075px) {
+    .ucd-library-search-catalog .weight-two {
+      display: block;
+    }
+    .ucd-library-search-catalog .weight-two.break {
+      display: none;
+    }
+  }
+</style>
+
+<iron-media-query query="min-width: 1050px" query-matches="{{xlargeScreen}}"></iron-media-query>
+<iron-media-query query="min-width: 950px" query-matches="{{largeScreen}}"></iron-media-query>
+<iron-media-query query="max-width: 500px" query-matches="{{smallScreen}}"></iron-media-query>
+
+<div class="text ucd-library-search-catalog" flat$="[[flat]]">
+  <h1 class="title">Search Library Catalog + Articles</h1>
+  <div class="help">
+    Find books, ebooks, journals, movies and music, government documents, and more.
+  </div>
+  <div class="layout">
+    <div class="flex">
+      <input type="text" id="input" placeholder="Search Library Catalog + Articles" on-keyup="_onKeyUp" />
+    </div>
+    <div>
+      <button class="search-btn" id="btn" on-click="_search">Search</button>
+    </div>
+  </div>
+
+  <div layout$="[[largeScreen]]">
+    <div style="padding-top: 5px; flex: 1; white-space: nowrap;">
+      <input type="checkbox" id="noextra" />
+      <label for="noextra" class="blue">
+        Library Catalog only
+      </label>
+    </div>
+
+    <div style="text-align: right; padding: 5px 0; margin: 5px 0">
+      <a extra id="advanced" on-click="_advancedSearch" class="weight-two">Advanced Search</a>
+      <span class="weight-two break">&nbsp;|&nbsp;</span>
+      <a extra href$="[[browseLink]]" on-click="_onBrowse" class="weight-two" on-click="setOutboundEvent">Browse Search</a>
+      <span class="weight-one break">&nbsp;|&nbsp;</span>
+      <a extra href="/library-search-faq" class="weight-one" on-click="setOutboundEvent">Search Tips</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,6 @@
+[{"ajax_id": "lib_blaisdell",
+        "url":"https://www.googleapis.com/calendar/v3/calendars/ucdavis.edu_b60u39g70m62qsd0mcvolmht4g@group.calendar.google.com/events",
+        "params": {"key": "AIzaSyBv6RYrZ50nq02NgEhkdXNCqXB-QCt2QtM", "maxResults":"2500"},
+        "event_series": [{"title": "Blaisdell Medical Library", "search_term": "blaisdell_main", "type": "library", "url": "https://www.library.ucdavis.edu/library/blaisdell-medical/"}]
+    }
+]
