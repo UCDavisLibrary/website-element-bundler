@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <link rel="stylesheet" type="text/css" href="https://www.library.ucdavis.edu/wp-content/themes/ucd-lib/assets/css/ucd-lib.min.css" />
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script type="module" src="../library-hours-single.js"></script>
+    <!--<script src="../../webcomponentsjs/webcomponents-loader.js"></script> -->
+
+    <title>library-hours single demo</title>
+
+  </head>
+  <body>
+      <main id="top">
+          <div class='container'>
+              <div class = "wrapper">
+                <section>
+                    <div class="library-section">
+                        <div class="row">
+                            <div class="col-xs-12 col-lg-7 library-section-info library-section-info-hours">
+                                <h4>Hours: </h4>
+                                <div class="spacer-half"></div>
+                                <library-hours-single endpoint = "https://www.googleapis.com/calendar/v3/calendars/ucdavis.edu_3dtim9248ptf2af2jfpqi6q4fc@group.calendar.google.com/events"
+                                                        key = "AIzaSyBv6RYrZ50nq02NgEhkdXNCqXB-QCt2QtM"
+                                                        search_term = "shields_main"
+                                                        verbose>
+                                </library-hours-single>
+                            </div>
+                        </div>
+                    </div>
+                </section
+
+                <section>
+                    <div class="library-section">
+                        <div class="row">
+                            <div class="col-xs-12 col-lg-7 library-section-info library-section-info-hours">
+                                <h4>Hours: </h4>
+                                <div class="spacer-half"></div>
+                                <library-hours-single endpoint = "https://www.googleapis.com/calendar/v3/calendars/ucdavis.edu_j9puvf3qfd2jcj86vpq5nqjmlg@group.calendar.google.com/events"
+                                                        key = "AIzaSyBv6RYrZ50nq02NgEhkdXNCqXB-QCt2QtM"
+                                                        search_term = "pse_main"
+                                                        verbose>
+                                </library-hours-single>
+                            </div>
+                        </div>
+                    </div>
+                </section
+
+                <section>
+                    <div class="library-section">
+                        <div class="row">
+                            <div class="col-xs-12 col-lg-7 library-section-info library-section-info-hours">
+                                <h4>Hours: </h4>
+                                <div class="spacer-half"></div>
+                                <library-hours-single endpoint = "https://www.googleapis.com/calendar/v3/calendars/ucdavis.edu_i1qgm4o31lkf9nmsklpon914tc@group.calendar.google.com/events"
+                                                        key = "AIzaSyBv6RYrZ50nq02NgEhkdXNCqXB-QCt2QtM"
+                                                        search_term = "carlson_main"
+                                                        verbose>
+                                </library-hours-single>
+                            </div>
+                        </div>
+                    </div>
+                </section
+
+            </div>
+        </div>
+    </main>
+
+  </body>
+</html>

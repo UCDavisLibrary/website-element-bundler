@@ -10,19 +10,32 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/1.0.0/webcomponents-loader.js"></script>
 
     <script>
-      var elementBundles = ['search', 'hours-week'];
+      var elementThemeDir = '/lib/';
+      var elementBundles = ['search', 'hours-week', 'hours-today', 'hours-single'];
     </script>
     <script src="lib/element-bundle-loader.js"></script>
   </head>
   <body>
-    
+
     <section class="home-search-main">
       <ucd-library-search style="margin: auto" flat></ucd-library-search>
     </section>
 
     <section class="home-search-main">
-      <library-hours-week></library-hours-week>
+      <library-hours-week json_path='https://raw.githubusercontent.com/UCDavisLibrary/ucd-library-hours-week/master/libraries.json'></library-hours-week>
     </section>
-    
+
+    <section class="home-search-main">
+      <library-hours json_path='https://raw.githubusercontent.com/UCDavisLibrary/ucd-library-hours-today/master/libraries.json'></library-hours>
+    </section>
+
+    <section class="home-search-main">
+        <library-hours-single
+        endpoint="https://www.googleapis.com/calendar/v3/calendars/ucdavis.edu_3dtim9248ptf2af2jfpqi6q4fc@group.calendar.google.com/events"
+        key="AIzaSyBv6RYrZ50nq02NgEhkdXNCqXB-QCt2QtM"
+        search_term="shields_main">
+        </library-hours-single>
+    </section>
+
   </body>
 </html>

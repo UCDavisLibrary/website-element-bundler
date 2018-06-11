@@ -1,0 +1,51 @@
+!function(e){function t(t){for(var a,i,o=t[0],l=t[1],d=t[2],h=0,u=[];h<o.length;h++)i=o[h],n[i]&&u.push(n[i][0]),n[i]=0;for(a in l)Object.prototype.hasOwnProperty.call(l,a)&&(e[a]=l[a]);for(p&&p(t);u.length;)u.shift()();return s.push.apply(s,d||[]),r()}function r(){for(var e,t=0;t<s.length;t++){for(var r=s[t],a=!0,o=1;o<r.length;o++){var l=r[o];0!==n[l]&&(a=!1)}a&&(s.splice(t--,1),e=i(i.s=r[0]))}return e}var a={},n={2:0},s=[];function i(t){if(a[t])return a[t].exports;var r=a[t]={i:t,l:!1,exports:{}};return e[t].call(r.exports,r,r.exports,i),r.l=!0,r.exports}i.m=e,i.c=a,i.d=function(e,t,r){i.o(e,t)||Object.defineProperty(e,t,{configurable:!1,enumerable:!0,get:r})},i.r=function(e){Object.defineProperty(e,"__esModule",{value:!0})},i.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return i.d(t,"a",t),t},i.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},i.p="";var o=window.webpackJsonp=window.webpackJsonp||[],l=o.push.bind(o);o.push=t,o=o.slice();for(var d=0;d<o.length;d++)t(o[d]);var p=l;s.push([48,0]),r()}({48:function(e,t,r){"use strict";r.r(t);var a=r(1);r(25),r(32),r(31);let n=document.createElement("div");n.style.display="none",n.innerHTML="\n<style>\nlibrary-hours {\n  display: block;\n  background-color: transparent;\n  padding: 0px;\n}\n\nlibrary-hours .hours-table{\n    border-bottom: none;\n    border-collapse: collapse;\n    margin-bottom: 0px;\n    width: 100%;\n    display: table;\n    table-layout: fixed;\n}\n\nlibrary-hours .hours-tr {\n    background-color: transparent;\n    border: none;\n    display:table-row;\n}\n\nlibrary-hours .hours-td {\n    border-bottom: none;\n    border-top: 1px solid #d8d8d8;\n    padding-left: 0px;\n    padding-right: 0px;\n    padding-bottom: 8px;\n    padding-top: 8px;\n    word-wrap: normal;\n    display: table-cell;\n    vertical-align: middle;\n}\n\n\nlibrary-hours a {\n    color: #002655;\n}\n\nlibrary-hours .closed {\n    color:#ba0c2f;\n    text-align: center;\n    font-weight: 600;\n    width: 11%;\n}\nlibrary-hours .open {\n    text-align: center;\n    width: 11%;\n}\n\nlibrary-hours th.is-today{\n    border-top: 3px solid #DAAA00;\n}\n\nlibrary-hours .keep-together{\n    white-space: nowrap;\n}\nlibrary-hours .status-icon{\n    margin-right: 4px;\n    margin-left: 8px;\n    margin-bottom: inherit !important;\n    width: 25px;\n    height: 25px;\n    min-width: 25px;\n    min-height: 25px;\n}\n  library-hours .lib-titles{\n      display:flex;\n      align-items:center;\n      font-weight: 600;\n      text-decoration: none;\n\n  }\n  library-hours .dept-titles{\n      display:flex;\n      align-items:center;\n  }\n</style>",document.head.appendChild(n);var s=e=>(class extends e{_attachDom(e){if(window.ShadyDOM&&window.ShadyDOM.inUse)return super._attachDom(e);let t=e.querySelectorAll("style");for(var r=0;r<t.length;r++)t[r].parentNode.removeChild(t[r]),this._stylesInserted||(t[r].setAttribute("id",this.nodeName.toLowerCase()+"-styles"),document.head.appendChild(t[r]));return this.appendChild(e),e}querySelector(e){return this.shadowRoot?this.shadowRoot.querySelector(e):super.querySelector(e)}querySelectorAll(e){return this.shadowRoot?this.shadowRoot.querySelectorAll(e):super.querySelectorAll(e)}});class i extends(Mixin(a.a).with(s)){static get template(){return a["b"]`
+        <iron-ajax
+            id="init_ajax"
+            url$="[[json_path]]"
+            handle-as="json"
+            on-response="_make_iron_ajax"
+            debounce-duration="300"></iron-ajax>
+
+
+    <template id="ajax_repeater" is="dom-repeat" items={{_api_parameters}} as="api">
+    <iron-ajax
+        id="[[api.id]]"
+        url="[[api.url]]"
+        params="[[api.params]]"
+        handle-as="json"
+        on-response="handle_response"
+        debounce-duration="300"></iron-ajax>
+    </template>
+
+        <div>
+            <div class="link-see-all-top clearfix">
+                <div class="float-xs-left">
+                    <h2 style="padding-right:5px;">Library Hours Today</h2>
+                </div>
+                <div class="float-xs-right" style="margin-top:8px;">
+                    <a href$="[[see_all]]" class="bold-link">See All
+                        <i class="cork-chevron right small gold" style="vertical-align: text-bottom;"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="spacer"></div>
+        </div>
+
+        <div class="hours-table">
+            <template is="dom-repeat" items="{{hours_today}}" sort=sort_hours>
+                <div class="hours-tr">
+                    <div class="hours-td" style="width:59%;">
+                        <a class$="[[item.type]]" href$=[[item.url]]>
+                        <img  class="status-icon" src$=[[item.icon_url]] alt$=[[item.status]]>
+                        [[item.title]]
+                        </a>
+                    </div>
+                    <div class$="[[item.status]] hours-td" style="width:41%;">
+                        <span class="keep-together">[[item.display_string.open]]</span>
+                        <span class="keep-together">[[item.display_string.close]]</span>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        `}static get is(){return"library-hours"}static get properties(){return{_calendars:{type:Object,value:{}},_api_parameters:{type:Array,value:[]},json_path:{type:String},see_all:{type:String,value:""},verbose:{type:Boolean},hours_today:{type:Array,value:[]},today:{type:Date},ajax_ids:{type:Array,value:[]},event_ids:{type:Array,value:[]},_lib_event_crosswalk:{type:Object,value:{}}}}constructor(){super()}ready(){super.ready();try{var e=(new Date).toLocaleString("en-US",{timeZone:"America/Los_Angeles"});e=new Date(e.split(",")[0]),this.today=e}catch(t){e=this._ie_today(),this.today=e}String.prototype.includes||(String.prototype.includes=function(e,t){return"number"!=typeof t&&(t=0),!(t+e.length>this.length)&&-1!==this.indexOf(e,t)}),this.$.init_ajax.generateRequest()}_make_iron_ajax(e){for(var t=e.detail.response,r=0;r<t.length;r++){var a={};this.push("ajax_ids",t[r].ajax_id),a.url=t[r].url,a.params=t[r].params,a.params.singleEvents=!0;var n=this.today.toJSON().split("T")[0]+"T22:00:00-07:00";a.params.timeMax=n;var s=this.today.toJSON().split("T")[0]+"T02:00:00-07:00";a.params.timeMin=s,a.id=t[r].ajax_id,this._lib_event_crosswalk[t[r].ajax_id]=t[r].event_series;for(var i=0;i<t[r].event_series.length;i++)this.push("event_ids",t[r].event_series[i].search_term);this.push("_api_parameters",a)}this.verbose&&console.log("api parameters",this._api_parameters),this.$.ajax_repeater.render();for(r=0;r<this.ajax_ids.length;r++)this.querySelector("#"+this.ajax_ids[r]).generateRequest()}handle_response(e){var t=e.detail.response;this.verbose&&console.log("raw response",t);for(var r=e.target.getAttribute("id"),a=this._lib_event_crosswalk[r],n=0;n<a.length;n++){var s=a[n].search_term,i=a[n].title,o=a[n].type,l=a[n].url,d=this._parse_calendar(t,s),p={title:i,id:s,data:d,ajax_id:r,type:o,url:l};this._calendars[s]=p,this.verbose&&console.log(s," parsed",p);var h=d;if(h.display_string=this._hours_string(h),h.title=i,h.id=s,h.url=l,"library"==p.type.toLowerCase()){var u=!0;h.type="lib-titles"}else{u=!1;h.type="dept-titles"}u?this._open_now(h)?h.icon_url="https://drive.google.com/uc?id=1oef1f3noVDdo0AE6Q5wlaj-qlSFmGC5T":h.icon_url="https://drive.google.com/uc?id=1i3Fq2Zu_4AbbtU6s26CgBhCBFCMJCTe9":this._open_now(h)?h.icon_url="https://drive.google.com/uc?id=1n0fB8usubCNXZus_fy3sTTfaiawmMc36":h.icon_url="https://drive.google.com/uc?id=1zRzqS2sXCCXCu6WkNkz70hrY5sBMT07v";var c=this.event_ids.indexOf(s);-1!=c&&(h.display_order=c,this.push("hours_today",h),this.verbose&&console.log(s," todays hours",h))}}_concat_id(e,t){return e+"__"+t}_open_now(e){if("closed"==e.status)return!1;try{var t=(r=(new Date).toLocaleString("en-GB",{timeZone:"America/Los_Angeles"})).split(",")[1].split(":");t=parseInt(t[0]+t[1])}catch(e){var r=this._ie_today(),a=String(r.getHours());1==a.length&&(a="0"+a);var n=String(r.getMinutes());1==n.length&&(n="0"+n);t=parseInt(a+n)}var s=e.start_time.split(":");s=parseInt(s[0]+s[1]);var i=e.end_time.split(":");return i=parseInt(i[0]+i[1]),t>=s&&t<i||t>=s&&s>=i}_format_header(e){var t="";return 7==e.length&&(t+=e[0].month_str.toUpperCase()+" "+e[0].day,t+=" - "+e[6].month_str.toUpperCase()+" "+e[6].day+" "+e[6].year),t}sort_hours(e,t){return e.display_order-t.display_order}_hours_string(e){if("closed"==e.status)return{open:"CLOSED",close:""};for(var t={},r=[e.start_time,e.end_time],a=0;a<2;a++){var n="",s=r[a].split(":"),i=parseInt(s[0]);if(i>12){i-=12;var o="pm"}else if(0==i){i=12;o="am"}else if(12==i){i=12;o="pm"}else o="am";n+=i.toString()+":"+s[1],n+=" "+o,0==a?t.open=n+" -":t.close=n}return t}split_datetime(e){var t={},r=e.split("T");r[0].split("-");return t.date=new Date(r[0]),t.time=r[1].substr(0,5),t}_ie_today(){for(var e=new Date,t=e.getTime()+6e4*e.getTimezoneOffset(),r=new Date(t+-252e5),a=new Date(t+-288e5),n=[new Date(2015,2,8),new Date(2015,10,2),new Date(2016,2,13),new Date(2016,10,7),new Date(2017,2,12),new Date(2017,10,6),new Date(2018,2,11),new Date(2018,10,5),new Date(2019,2,10),new Date(2019,10,4),new Date(2020,2,8),new Date(2020,10,2),new Date(2021,2,14),new Date(2021,10,8),new Date(2022,2,13),new Date(2022,10,7),new Date(2023,2,12),new Date(2023,10,6),new Date(2024,2,10),new Date(2024,10,4)],s=0;s<n.length;s++)if(a<n[s])return r;return console.log("Unable to determine daylight savings time. See _ie_today function"),e}_parse_calendar(e,t){for(var r=e.items,a={id:t,status:"closed"},n=0;n<r.length;n++){if("description"in r[n])var s=r[n].description.toLowerCase();else s="";if(s.includes(t.toLowerCase())){if(!0,"dateTime"in r[n].start){var i=this.split_datetime(r[n].start.dateTime);a.start_date=i.date,a.start_time=i.time,a.end_time=this.split_datetime(r[n].end.dateTime).time}else a.start_date=new Date(this.today),a.start_time="00:00",a.end_time="00:00";a.status="open";break}}return a}}customElements.define(i.is,i)}});

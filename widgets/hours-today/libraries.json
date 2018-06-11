@@ -1,0 +1,27 @@
+[{"ajax_id": "lib_shields",
+    "url":"https://www.googleapis.com/calendar/v3/calendars/ucdavis.edu_3dtim9248ptf2af2jfpqi6q4fc@group.calendar.google.com/events",
+    "params": {"key": "AIzaSyBv6RYrZ50nq02NgEhkdXNCqXB-QCt2QtM", "maxResults":"2500"},
+    "event_series": [{"title": "Shields (Main)", "search_term": "shields_main", "type": "library", "url": "https://beta.library.ucdavis.edu/library/peter-j-shields#library-hours"},
+        {"title": "24-Hr Study Room", "search_term": "reading_room", "type": "department", "url": "https://beta.library.ucdavis.edu/service/24-hour-study-space/"}]
+    },
+    {"ajax_id": "lib_pse",
+        "url":"https://www.googleapis.com/calendar/v3/calendars/ucdavis.edu_j9puvf3qfd2jcj86vpq5nqjmlg@group.calendar.google.com/events",
+        "params": {"key": "AIzaSyBv6RYrZ50nq02NgEhkdXNCqXB-QCt2QtM", "maxResults":"2500"},
+        "event_series": [{"title": "Phys Sci & Engineering", "search_term": "pse_main", "type": "library", "url": "https://beta.library.ucdavis.edu/library/physical-sciences-engineering#library-hours"}]
+    },
+    {"ajax_id": "lib_carlson",
+        "url":"https://www.googleapis.com/calendar/v3/calendars/ucdavis.edu_i1qgm4o31lkf9nmsklpon914tc@group.calendar.google.com/events",
+        "params": {"key": "AIzaSyBv6RYrZ50nq02NgEhkdXNCqXB-QCt2QtM", "maxResults":"2500"},
+        "event_series": [{"title": "Carlson Health Sci", "search_term": "carlson_main", "type": "library", "url": "https://beta.library.ucdavis.edu/library/carlson-health-sciences#library-hours"}]
+    },
+    {"ajax_id": "lib_blaisdell",
+        "url":"https://www.googleapis.com/calendar/v3/calendars/ucdavis.edu_b60u39g70m62qsd0mcvolmht4g@group.calendar.google.com/events",
+        "params": {"key": "AIzaSyBv6RYrZ50nq02NgEhkdXNCqXB-QCt2QtM", "maxResults":"2500"},
+        "event_series": [{"title": "Blaisdell Medical", "search_term": "blaisdell_main", "type": "library", "url": "https://beta.library.ucdavis.edu/library/blaisdell-medical#library-hours"}]
+    },
+    {"ajax_id": "lib_mabie",
+        "url":"https://www.googleapis.com/calendar/v3/calendars/ucdavis.edu_d2ss1cvm1l5jepr3vorqfh56h4@group.calendar.google.com/events",
+        "params": {"key": "AIzaSyBv6RYrZ50nq02NgEhkdXNCqXB-QCt2QtM", "maxResults":"2500"},
+        "event_series": [{"title": "Mabie Law", "search_term": "mabie_main", "type": "library", "url": "https://beta.library.ucdavis.edu/library/uc-davis-law#library-hours"}]
+    }
+]

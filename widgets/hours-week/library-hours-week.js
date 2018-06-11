@@ -32,7 +32,6 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
         on-response="handle_response"
         debounce-duration="300"></iron-ajax>
     </template>
-<h1>CHANGES!</h1>
         <h2>[[element_title]]</h2>
         <div id="legend-container">
             <div class="legend-item-container">
