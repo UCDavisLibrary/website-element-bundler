@@ -13,36 +13,32 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
     static get template(){
         return html`
         <style>
+        :host {
+            --ucd-hours-exception: url();
+            --ucd-hours-selected: url();
+            --ucd-hours-today: url();
+            --ucd-hours-today-selected: url();
+            --ucd-hours-selected-exception: url();
+            --ucd-hours-today-exception: url();
+        }
         #month_container .is_exception {
-            background-image: url("[[icon_dir]] + cal-exception.svg");
-            background-repeat: no-repeat;
-            background-size: 100% 100%;
+            background-image: var(--ucd-hours-exception);
         }
         .selected_day {
-            background-image: url("[[icon_dir]] + cal-selected.svg");
-            background-repeat: no-repeat;
-            background-size: 100% 100%;
+            background-image: var(--ucd-hours-selected);
         }
         .cal-day-today {
-            background-image: url("[[icon_dir]] + cal-today.svg");
-            background-repeat: no-repeat;
-            background-size: 100% 100%;
+            background-image: var(--ucd-hours-today);
         }
         .selected_day.cal-day-today  {
-            background-image: url("[[icon_dir]] + cal-today.svg");
-            background-repeat: no-repeat;
-            background-size: 100% 100%;
+            background-image: var(--ucd-hours-today-selected) !important;
         }
 
         .selected_day.is_exception  {
-            background-image: url("[[icon_dir]] + cal-selected.svg"), url("[[icon_dir]] + cal-exception.svg") !important;
-            background-repeat: no-repeat;
-            background-size: 100% 100%;
+            background-image: var(--ucd-hours-selected-exception) !important;
         }
         .cal-day-today.is_exception {
-            background-image: url("[[icon_dir]] + cal-today.svg"), url("[[icon_dir]] + cal-exception.svg") !important;
-            background-repeat: no-repeat;
-            background-size: 100% 100%;
+            background-image: var(--ucd-hours-today-exception) !important;
         }
         </style>
         <iron-ajax
@@ -70,19 +66,19 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
         <div id="legend-container">
             <div class="legend-item-container">
                 <p class="legend-item details-text" style="text-transform:none;">
-                    <img  class="legend-icon" src="[[icon_dir]] + cal-today.svg">
+                    <img  class="legend-icon" src="[[icon_dir]]cal-today.svg">
                     Today
                 </p>
             </div>
             <div class="legend-item-container">
                 <p class="legend-item details-text" style="text-transform:none;">
-                    <img  class="legend-icon" src="[[icon_dir]] + cal-selected.svg">
+                    <img  class="legend-icon" src="[[icon_dir]]cal-selected.svg">
                     Selected Day
                 </p>
             </div>
             <div class="legend-item-container">
                 <p class="legend-item details-text" style="text-transform:none;">
-                    <img  class="legend-icon" src="[[icon_dir]] + cal-exception.svg">
+                    <img  class="legend-icon" src="[[icon_dir]]cal-exception.svg">
                     Special Hours
                 </p>
             </div>
@@ -267,6 +263,17 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
 
   ready(){
       super.ready();
+
+      // Set CSS locations of icons
+        this.updateStyles({
+            '--ucd-hours-exception' : `url("${this.icon_dir}cal-exception.svg")`,
+            '--ucd-hours-selected' : `url("${this.icon_dir}cal-selected.svg")`,
+            '--ucd-hours-today' : `url("${this.icon_dir}cal-today.svg")`,
+            '--ucd-hours-today-selected' : `url("${this.icon_dir}cal-today.svg")`,
+            '--ucd-hours-selected-exception' : `url("${this.icon_dir}cal-selected.svg"), url("${this.icon_dir}cal-exception.svg")`,
+            '--ucd-hours-today-exception' : `url("${this.icon_dir}cal-today.svg"), url("${this.icon_dir}cal-exception.svg")`
+
+        });
 
       // Look up current week's hours
       try {

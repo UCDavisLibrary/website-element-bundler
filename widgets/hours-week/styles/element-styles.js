@@ -150,6 +150,8 @@ library-hours-week #month_container {
       cursor: pointer;
       align-items: center;
       font-weight: 400;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
   }
   library-hours-week .day-text {
       position: relative;
