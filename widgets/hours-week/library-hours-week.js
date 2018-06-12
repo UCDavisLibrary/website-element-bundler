@@ -12,6 +12,39 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
 .with(LightDom) {
     static get template(){
         return html`
+        <style>
+        #month_container .is_exception {
+            background-image: url("[[icon_dir]] + cal-exception.svg");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+        .selected_day {
+            background-image: url("[[icon_dir]] + cal-selected.svg");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+        .cal-day-today {
+            background-image: url("[[icon_dir]] + cal-today.svg");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+        .selected_day.cal-day-today  {
+            background-image: url("[[icon_dir]] + cal-today.svg");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .selected_day.is_exception  {
+            background-image: url("[[icon_dir]] + cal-selected.svg"), url("[[icon_dir]] + cal-exception.svg") !important;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+        .cal-day-today.is_exception {
+            background-image: url("[[icon_dir]] + cal-today.svg"), url("[[icon_dir]] + cal-exception.svg") !important;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+        </style>
         <iron-ajax
             id="init_ajax"
             url$="[[json_path]]"
@@ -32,23 +65,24 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
         on-response="handle_response"
         debounce-duration="300"></iron-ajax>
     </template>
+
         <h2>[[element_title]]</h2>
         <div id="legend-container">
             <div class="legend-item-container">
                 <p class="legend-item details-text" style="text-transform:none;">
-                    <img  class="legend-icon" src="https://drive.google.com/uc?id=1svSqs2ToLv4DypkqUGZdBgeRA6h-pEL2">
+                    <img  class="legend-icon" src="[[icon_dir]] + cal-today.svg">
                     Today
                 </p>
             </div>
             <div class="legend-item-container">
                 <p class="legend-item details-text" style="text-transform:none;">
-                    <img  class="legend-icon" src="https://drive.google.com/uc?id=19Z0p9iolwPXnuqMCXINlENgGIbqd2VZC">
+                    <img  class="legend-icon" src="[[icon_dir]] + cal-selected.svg">
                     Selected Day
                 </p>
             </div>
             <div class="legend-item-container">
                 <p class="legend-item details-text" style="text-transform:none;">
-                    <img  class="legend-icon" src="https://drive.google.com/uc?id=1VxB6X0r5UWaigjQZh9E_GG47Yhn2PQTW">
+                    <img  class="legend-icon" src="[[icon_dir]] + cal-exception.svg">
                     Special Hours
                 </p>
             </div>
@@ -219,6 +253,10 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
     month_array: {
         type: Array,
         value: [],
+    },
+    icon_dir : {
+        type: String,
+        value: "",
     }
     };
   }
@@ -629,19 +667,19 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
               // Add location of appropriate icon svg
               if (is_library){
                   if (this.open_now(a_days_hours)){
-                      weeks_hours['icon_url'] = "https://drive.google.com/uc?id=1oef1f3noVDdo0AE6Q5wlaj-qlSFmGC5T";
+                      weeks_hours['icon_url'] = this.icon_dir + 'open-lib.svg';
                   }
                   else{
-                      weeks_hours['icon_url'] = "https://drive.google.com/uc?id=1i3Fq2Zu_4AbbtU6s26CgBhCBFCMJCTe9";
+                      weeks_hours['icon_url'] = this.icon_dir + 'closed-lib.svg';;
 
                   }
               }
               else {
                   if (this.open_now(a_days_hours)){
-                      weeks_hours['icon_url'] = "https://drive.google.com/uc?id=1n0fB8usubCNXZus_fy3sTTfaiawmMc36";
+                      weeks_hours['icon_url'] = this.icon_dir + 'open-dept.svg';;
                   }
                   else{
-                      weeks_hours['icon_url'] = "https://drive.google.com/uc?id=1zRzqS2sXCCXCu6WkNkz70hrY5sBMT07v";
+                      weeks_hours['icon_url'] = this.icon_dir + 'closed-dept.svg';;
 
                   }
               }

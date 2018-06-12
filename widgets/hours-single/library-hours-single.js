@@ -62,6 +62,10 @@ class LibraryHoursSingle extends Mixin(PolymerElement)
       todays_hours: {
           type: Object
       },
+      icon_dir: {
+          type: String,
+          value: ""
+      }
 
     };
   }
@@ -129,7 +133,7 @@ class LibraryHoursSingle extends Mixin(PolymerElement)
 
       if (data.items.length < 1 ){
           this.set("status", "lib-closed");
-          this.set("status_icon", "https://drive.google.com/uc?id=1i3Fq2Zu_4AbbtU6s26CgBhCBFCMJCTe9");
+          this.set("status_icon", this.icon_dir + "closed-lib.svg");
       }
       else {
           if (data.items.length > 1) {
@@ -155,11 +159,11 @@ class LibraryHoursSingle extends Mixin(PolymerElement)
 
           if (this._open_now(parsed_item)){
               this.set("status", "lib-open");
-              this.set("status_icon", "https://drive.google.com/uc?id=1oef1f3noVDdo0AE6Q5wlaj-qlSFmGC5T");
+              this.set("status_icon", this.icon_dir + "open-lib.svg");
           }
           else {
               this.set("status", "lib-closed");
-              this.set("status_icon", "https://drive.google.com/uc?id=1i3Fq2Zu_4AbbtU6s26CgBhCBFCMJCTe9");
+              this.set("status_icon", this.icon_dir + "closed-lib.svg");
           }
 
       }

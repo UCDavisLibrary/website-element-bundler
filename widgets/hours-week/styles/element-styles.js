@@ -160,37 +160,7 @@ library-hours-week #month_container {
   library-hours-week #month_container .next {
       color: #808080;
   }
-  library-hours-week #month_container .is_exception {
-      background-image: url("https://drive.google.com/uc?id=1VxB6X0r5UWaigjQZh9E_GG47Yhn2PQTW");
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-  }
-  library-hours-week .selected_day {
-      background-image: url("https://drive.google.com/uc?id=19Z0p9iolwPXnuqMCXINlENgGIbqd2VZC");
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-  }
-  library-hours-week .cal-day-today {
-      background-image: url("https://drive.google.com/uc?id=1svSqs2ToLv4DypkqUGZdBgeRA6h-pEL2");
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-  }
-  library-hours-week .selected_day.cal-day-today  {
-      background-image: url("https://drive.google.com/uc?id=1svSqs2ToLv4DypkqUGZdBgeRA6h-pEL2");
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-  }
 
-  library-hours-week .selected_day.is_exception  {
-      background-image: url("https://drive.google.com/uc?id=19Z0p9iolwPXnuqMCXINlENgGIbqd2VZC"), url("https://drive.google.com/uc?id=1VxB6X0r5UWaigjQZh9E_GG47Yhn2PQTW") !important;
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-  }
-  library-hours-week .cal-day-today.is_exception {
-      background-image: url("https://drive.google.com/uc?id=1svSqs2ToLv4DypkqUGZdBgeRA6h-pEL2"), url("https://drive.google.com/uc?id=1VxB6X0r5UWaigjQZh9E_GG47Yhn2PQTW") !important;
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-  }
   library-hours-week .legend-item {
       display:flex;
       align-items:center;
@@ -402,7 +372,7 @@ library-hours-week .hours-td:nth-child(even), .hours-th:nth-child(even) {
   }
   library-hours-week #month_0{
       width: 225px;
-      height: 225px;
+      height: 230px;
   }
 
   library-hours-week .hours-td {

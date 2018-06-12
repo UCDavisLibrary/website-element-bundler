@@ -98,6 +98,10 @@ class LibraryHours extends Mixin(PolymerElement)
         type: Array,
         value: [],
     },
+    icon_dir : {
+        type: String,
+        value: "",
+    },
     _lib_event_crosswalk: {
       type: Object,
       value: {},
@@ -231,19 +235,19 @@ class LibraryHours extends Mixin(PolymerElement)
           // Add location of appropriate icon svg
           if (is_library){
               if (this._open_now(todays_hours)){
-                  todays_hours['icon_url'] = "https://drive.google.com/uc?id=1oef1f3noVDdo0AE6Q5wlaj-qlSFmGC5T";
+                  todays_hours['icon_url'] = this.icon_dir + "open-lib.svg";
               }
               else{
-                  todays_hours['icon_url'] = "https://drive.google.com/uc?id=1i3Fq2Zu_4AbbtU6s26CgBhCBFCMJCTe9";
+                  todays_hours['icon_url'] = this.icon_dir + "closed-lib.svg";
 
               }
           }
           else {
               if (this._open_now(todays_hours)){
-                  todays_hours['icon_url'] = "https://drive.google.com/uc?id=1n0fB8usubCNXZus_fy3sTTfaiawmMc36";
+                  todays_hours['icon_url'] = this.icon_dir + "open-dept.svg";
               }
               else {
-                  todays_hours['icon_url'] = "https://drive.google.com/uc?id=1zRzqS2sXCCXCu6WkNkz70hrY5sBMT07v";
+                  todays_hours['icon_url'] = this.icon_dir + "closed-dept.svg";
 
               }
           }
