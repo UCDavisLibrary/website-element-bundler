@@ -36,6 +36,7 @@
     border: 1px solid transparent;
     cursor: pointer;
     border-radius: 0;
+    width: auto;
   }
 
   ucd-library-search .search-btn:hover {
@@ -53,11 +54,12 @@
     font-size: 40px;
   } */
 
-  .blue {
+  ucd-library-search  .blue {
     color: var(--default-primary-color);
   }
 
-  select, input[type="text"] {
+  ucd-library-search select, 
+  ucd-library-search input[type="text"] {
     box-sizing: border-box;
     display: block;
     width: 100%;
@@ -72,62 +74,65 @@
     background-clip: padding-box;
   }
 
-  select {
-    border-radius: 0;
-    border: 1px solid var(--default-primary-yellow);
-    background-color: var(--default-secondary-yellow);
-    color: var(--default-primary-color);
+  ucd-library-search  select {
+    border-radius: 0 !important;
+    border: 1px solid var(--default-primary-yellow) !important;
+    background-color: var(--default-secondary-yellow) !important;
+    color: var(--default-primary-color) !important;
 
     background-image:
       linear-gradient(45deg, transparent 50%, var(--default-primary-color) 50%),
-      linear-gradient(135deg, var(--default-primary-color) 50%, transparent 50%);
-    background-position:
+      linear-gradient(135deg, var(--default-primary-color) 50%, transparent 50%) !important;
+    background-position :
       calc(100% - 20px) calc(1em + 2px),
       calc(100% - 15px) calc(1em + 2px),
-      calc(100% - 2.5em) 0.5em;
+      calc(100% - 2.5em) 0.5em !important;
     background-size:
       5px 5px,
       5px 5px,
-      1px 1.5em;
+      1px 1.5em !important;
     background-repeat: no-repeat;
 
     
-    padding-right: 20px;
+    padding-right: 20px !important;
     -webkit-appearance: none;
     -webkit-border-radius: 0px;
-    height: 52px;
+    height: 52px !important;
   }
 
-  .help {
+  ucd-library-search  .help {
     font-size: var(--default-font-size);
     padding-bottom: 15px;
   }
 
   @media(max-width: 600px) {
-    select, input[type="text"], .search-btn {
-      padding: 10px;
-      font-size: .75rem;
+    ucd-library-search select, 
+    ucd-library-search input[type="text"], 
+    ucd-library-search .search-btn {
+      padding: 10px !important;
+      font-size: .75rem !important;
     }
-    select {
-      height: 37px;
-      padding-right: 15px;
+    ucd-library-search select {
+      height: 37px !important;
+      padding-right: 15px !important;
     }
 
-    h1.title {
+    ucd-library-search h1.title {
       display: none;
     }
   }
 
   @media(max-width: 700px) {
-    h1.title {
+    ucd-library-search h1.title {
       font-size: 30px;
     }
   }
 
-  input[type="text"]:focus, select:focus {
+  ucd-library-search input[type="text"]:focus, 
+  ucd-library-search select:focus {
     outline:0;
-    border: 1px solid var(--default-primary-color);
-    color: var(--default-primary-color);
+    border: 1px solid var(--default-primary-color) !important;
+    color: var(--default-primary-color) !important;
   }
 
   @keyframes bounceIn {
