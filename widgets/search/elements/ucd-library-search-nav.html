@@ -1,5 +1,5 @@
 <style>
-  :host, ucd-library-search-nav {
+  .ucd-library-search-nav {
     display: block;
   }
 
@@ -46,19 +46,24 @@
     z-index: 20;
   }
 
+  .ucd-library-search-nav select {
+    font-size: initial;
+    -moz-appearance: none;
+  }
+
   @media(min-width: 700px) {
     .ucd-library-search-nav div.btn-nav button {
       font-size: var(--default-font-size);
-      height: 80px;
-      width: 95px;
+      height: 80px !important;
+      width: 95px !important;
     }
   }
 
   @media(min-width: 900px) {
     .ucd-library-search-nav div.btn-nav button {
       font-size: var(--default-font-size);
-      height: 90px;
-      width: 120px;
+      height: 90px !important;
+      width: 120px !important;
     }
   }
 </style>
