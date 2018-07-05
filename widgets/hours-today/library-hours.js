@@ -57,6 +57,19 @@ class LibraryHours extends Mixin(PolymerElement)
                     </div>
                 </div>
             </template>
+            <div class="hours-tr">
+                <div class="hours-td" style="width:59%;">
+                    <a class="lib-titles" href="https://law.ucdavis.edu/library/about/hours-calendar.html">
+                    <img  class="status-icon" src$="[[icon_dir]]link.svg" alt="hours">
+                    Mabie Law
+                    </a>
+                </div>
+                <div class="open hours-td" style="width:41%;">
+                    <a class$="lib-titles" href="https://law.ucdavis.edu/library/about/hours-calendar.html">
+                    Mabie Hours Site
+                    </a>
+                </div>
+            </div>
         </div>
 
         `;
