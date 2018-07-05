@@ -24,6 +24,10 @@ const DEFAULT_DATABASES = [
   {
     label : 'BIOSIS',
     url : 'http://webofscience.com/biosis'
+  },
+  {
+    label : 'FirstSearch',
+    url : 'http://firstsearch.oclc.org/fsip?dbname=WorldCat'
   }
 ]
 
