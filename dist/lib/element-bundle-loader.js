@@ -1,4 +1,4 @@
-var CUSTOM_ELEMENT_VERSION = '1.1.0';
+var CUSTOM_ELEMENT_VERSION = '2.0.0';
 
 function classSupport() {
   try {
@@ -16,34 +16,19 @@ function initCustomElements() {
   // add the vender bundle first
   elementBundles.unshift('vendor');
 
-  initCustomEleSafeCheck();
   console.log('Webcomponents ready.');
 
-  var prefix = '';
+  var dir = '';
   if( window.elementThemeDir ) {
-    prefix = elementThemeDir;
+    dir = elementThemeDir;
   }
 
-  var suffix = '.bundle.js'
-  if( !classSupport() ) prefix = '.ie-bundle.js';
+  var file = 'main.bundle.js'
+  if( !classSupport() ) suffix = 'main.ie-bundle.js';
 
-  for( var i = 0; i < elementBundles.length; i++ ) {
-    let script = document.createElement('script');
-    script.src = prefix+elementBundles[i]+suffix+'?_='+CUSTOM_ELEMENT_VERSION;
-    document.head.appendChild(script);
-  }
-}
-
-// only allow one element of type, do not throw error,
-// ie check before insert
-function initCustomEleSafeCheck() {
-  var customElementsDefine = customElements.define;
-  var definedCustomElementsMap = {};
-  customElements.define = function(name, def) {
-    if( definedCustomElementsMap[name] ) return;
-    definedCustomElementsMap[name] = true;
-    customElementsDefine.call(customElements, name, def);
-  }
+  let script = document.createElement('script');
+  script.src = dir+file+'?_='+CUSTOM_ELEMENT_VERSION;
+  document.head.appendChild(script);
 }
 
 if( !window.customElements ) { // we are using polyfill and it's still loading

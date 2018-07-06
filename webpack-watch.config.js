@@ -15,22 +15,8 @@ if( !Array.isArray(configs) ) {
 } 
 
 configs.forEach(config => {
-  config.entry = require('./webpack-widgets.js');
-  for( let key in config.entry ) {
-    config.entry[key] = path.resolve(__dirname, config.entry[key]);
-  }
-
-  config.optimization = {
-    splitChunks: {
-      cacheGroups: {
-        commons: {
-          test: /[\\/]node_modules[\\/]/,
-          name: "vendor",
-          chunks: "all"
-        }
-      }
-    }
-  }
+  config.entry = path.resolve(__dirname, 'webpack-widgets.js');
+  config.output.chunkFilename = config.output.filename;
 });
 
 module.exports = configs;
