@@ -1,4 +1,4 @@
-var CUSTOM_ELEMENT_VERSION = '2.0.0';
+var CUSTOM_ELEMENT_VERSION = '2.0.1';
 
 function classSupport() {
   try {
@@ -13,9 +13,6 @@ function initCustomElements() {
     return;
   }
 
-  // add the vender bundle first
-  elementBundles.unshift('vendor');
-
   console.log('Webcomponents ready.');
 
   var dir = '';
@@ -24,7 +21,7 @@ function initCustomElements() {
   }
 
   var file = 'main.bundle.js'
-  if( !classSupport() ) suffix = 'main.ie-bundle.js';
+  if( !classSupport() ) file = 'main.ie-bundle.js';
 
   let script = document.createElement('script');
   script.src = dir+file+'?_='+CUSTOM_ELEMENT_VERSION;

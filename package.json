@@ -25,6 +25,7 @@
   "homepage": "https://github.com/UCDavisLibrary/website-element-bundler#readme",
   "dependencies": {
     "@ucd-lib/cork-app-build": "^0.1.4",
+    "@webcomponents/webcomponentsjs": "^2.0.2",
     "webpack": "^4.15.1",
     "webpack-cli": "^3.0.8"
   },

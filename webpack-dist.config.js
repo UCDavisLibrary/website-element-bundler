@@ -2,7 +2,7 @@ const path = require('path');
 
 let configs = require('@ucd-lib/cork-app-build').dist({
   root : __dirname,
-  entry : '',
+  entry : 'webpack-widgets.js',
   dist : 'dist/lib',
   clientModules : 'widgets/node_modules',
   modern : '[name].bundle.js',
@@ -10,7 +10,6 @@ let configs = require('@ucd-lib/cork-app-build').dist({
 });
 
 configs.forEach(config => {
-  config.entry = path.resolve(__dirname, 'webpack-widgets.js');
   config.output.chunkFilename = config.output.filename.replace(/name/, 'chunkhash');
 });
 
