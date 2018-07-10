@@ -16,6 +16,19 @@ class UCDLibrarySearchNav extends Mixin(PolymerElement)
       flat : {
         type : Boolean,
         value : false
+      },
+      largeScreen : {
+        type : Boolean,
+        value : false
+      },
+      smallScreen : {
+        type : Boolean,
+        value : false
+      },
+      flexButtons : {
+        type : Boolean,
+        false : false,
+        computed : '_onSizeUpdate(largeScreen, smallScreen)'
       }
     }
   }
@@ -34,6 +47,10 @@ class UCDLibrarySearchNav extends Mixin(PolymerElement)
     }
     
     this.$.selector.value = this.selected;
+  }
+
+  _onSizeUpdate() {
+    return !this.largeScreen && !this.smallScreen;
   }
 
   _select(e) {
