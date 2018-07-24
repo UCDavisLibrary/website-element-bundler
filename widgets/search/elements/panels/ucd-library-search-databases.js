@@ -24,10 +24,6 @@ const DEFAULT_DATABASES = [
   {
     label : 'BIOSIS',
     url : 'http://webofscience.com/biosis'
-  },
-  {
-    label : 'FirstSearch',
-    url : 'http://firstsearch.oclc.org/fsip?dbname=WorldCat'
   }
 ]
 
@@ -57,7 +53,7 @@ class UCDLibrarySearchDatabases extends Mixin(PolymerElement)
   static get template() {
     return html([template]);
   }
-  
+
   constructor() {
     super();
     this._onPopularDatabaseUpdate();

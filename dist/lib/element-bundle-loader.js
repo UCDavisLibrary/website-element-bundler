@@ -1,4 +1,4 @@
-var CUSTOM_ELEMENT_VERSION = '2.0.1';
+var CUSTOM_ELEMENT_VERSION = '2.0.2';
 
 function classSupport() {
   try {
