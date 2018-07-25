@@ -34,6 +34,12 @@ To generate a dist build, run `npm run dist` after editing the element-bundler-l
 
 Finally, copy over the [/dist/lib](./dist/lib) folder to the websites wp-content/themes/ucd-lib/html/dist folder (you can wipe and replace).  Now test on the website.
 
+``` bash
+user=quinn
+host=beta.library.ucdavis.edu
+rsync dist/lib/ $user@$host:/var/www/html/wp-content/themes/ucd-lib/html/dist -v --delete -r
+```
+
 # Using elements with the library website.
 
 First, define the bundles you want to use in the page and add the element loader in the twig file.  The element loader will first pull in the WebComponent polyfills if required, then it will pull in required bundles.
