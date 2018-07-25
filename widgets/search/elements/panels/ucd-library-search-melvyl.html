@@ -1,15 +1,28 @@
 <style>
   .ucd-library-search-melvyl .bottom {
-    display: flex;
-    align-items: flex-start;
     white-space: nowrap;
-    font-weight: var(--default-font-weight);
     text-align: right;
-    padding: 5px 0;
+    padding-top: 5px;
+    margin-top: 5px;
   }
 
-  .ucd-library-search-melvyl .break {
-    margin: 0 10px;
+  @media(max-width: 1200px) {
+    .ucd-library-search-melvyl .weight-one {
+      display: block;
+    }
+    .ucd-library-search-melvyl .weight-one.break {
+      display: none;
+    }
+  }
+
+  @media(max-width: 1075px) {
+    .ucd-library-search-melvyl .weight-two {
+      display: block;
+      margin: 0 0px;
+    }
+    .ucd-library-search-melvyl .weight-two.break {
+      display: none;
+    }
   }
 
 </style>
@@ -29,13 +42,9 @@
     </div>
 
     <div flat$="[[flat]]" class="bottom">
-      <div style="flex: 1" >
-        <a href="http://ucdavis.worldcat.org/advancedsearch" on-click="setOutboundEvent">WorldCat Advanced</a>
-      </div>
-      <div class="break">|</div>
-      <div>
-        <a href="http://firstsearch.oclc.org/fsip?dbname=WorldCat" on-click="setOutboundEvent">WorldCat via FirstSearch</a>
-      </div>
+        <a href="http://ucdavis.worldcat.org/advancedsearch" on-click="setOutboundEvent" class="weight-two">WorldCat Advanced</a>
+        <span class="weight-two break">&nbsp;|&nbsp;</span>
+        <a href="http://firstsearch.oclc.org/fsip?dbname=WorldCat" on-click="setOutboundEvent" class="weight-two">WorldCat via FirstSearch</a>
     </div>
   </div>
 </div>
