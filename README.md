@@ -28,11 +28,13 @@ If you want to quickly test IE, there is a hard coded flag in webpack-watch.conf
 
 # Dist Build
 
-Important! update the version number in [/lib/element-bundle-loader.js](./lib/element-bundle-loader.js).  This will ensure that when elements are deployed to the website, the cache is blown away.
+To generate a dist build, run `npm run dist`.  This will generate *.bundle.js and *.ie-bundle.js scripts.  Both will be minified.  Serve the dist directory with [http-server](https://www.npmjs.com/package/http-server). You should see all website widgets in all browsers (including Firefox, Edge and IE11).
 
-To generate a dist build, run `npm run dist` after editing the element-bundler-loader script.  This will generate *.bundle.js and *.ie-bundle.js scripts.  Both will be minified.  Serve the dist directory with [http-server](https://www.npmjs.com/package/http-server). You should see all website widgets in all browsers (including Firefox, Edge and IE11).
+Copy over the [/dist/lib](./dist/lib) folder to the websites [wp-content/themes/ucd-lib/html/dist](https://github.com/UCDavisLibrary/ucd-lib/tree/master/wp-content/themes/ucd-lib/html/dist) folder (you can wipe and replace).  
 
-Finally, copy over the [/dist/lib](./dist/lib) folder to the websites wp-content/themes/ucd-lib/html/dist folder (you can wipe and replace).  Now test on the website.
+Important! update the ```CUSTOM_ELEMENT_VERSION``` version number in [element-loader.twig](https://github.com/UCDavisLibrary/ucd-lib/blob/master/wp-content/themes/ucd-lib/views/includes/element-loader.twig) in the main library website twig code.  This will ensure that when elements are deployed to the website the cache is blown away.
+
+Now test on the website.
 
 # Using elements with the library website.
 
