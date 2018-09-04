@@ -843,6 +843,10 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
           return {'open': 'CLOSED', 'close': ""};
       }
 
+      if (data.tbd) {
+          return {'open': 'TBD', 'close': ""};
+      }
+
      var display_dict = {};
       var day_arr = [data.start_time, data.end_time];
       for (var i = 0; i < 2; i++){
@@ -966,6 +970,7 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
                   hours['end_time'] = calendar['rule'][cal_id]['end_time'];
                   hours['exception'] = false;
                   hours['status'] = 'open';
+                  hours['tbd'] = calendar['rule'][cal_id]['tbd'];
                   return hours;
               }
           }
@@ -1021,9 +1026,10 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
                                                'freq': 'WEEKLY'
                                                'days': ['MO', 'TU', 'WE', TH, 'FR']
                                                'start_time': '07:30:00-8:00'
-                                               'end_time': '00:00:00-8:00'
+                                               'end_time': '00:00:00-8:00',
+                                               'tbd': true // if all events in recurring series do not have set hours
                                               }
-               }
+               },
        'overlap': false // true if two reoccurring series overlap
        'exceptions' {'2018-06-05': {'start_time': '07:30:00-8:00'
                                     'end_time': '00:00:00-8:00'
@@ -1071,6 +1077,13 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
                       event_rule['end_time'] = "00:00";
                   }
 
+                  if (event_description.includes('tbd')) {
+                      event_rule['tbd'] = true;
+                  }
+                  else {
+                      event_rule['tbd'] = false;
+                  }
+
 
                   cal_data['id'].push(event_id);
                   cal_data['name'][event_id] = event_name;
@@ -1116,12 +1129,17 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
                   exc_date_times['start_time'] = this.split_datetime(events[i]['start']['dateTime'])['time'];
                   exc_date_times['status'] = 'open';
                   exc_date_times['exception'] = true;
+                  exc_date_times['tbd'] = false;
 
                   // verify hours are actually different
                   // Google doesn't allow user to undo an exception
                   var rule_start = cal_data['rule'][events[i]['recurringEventId']]['start_time'];
                   var rule_end = cal_data['rule'][events[i]['recurringEventId']]['end_time'];
-                  if ( rule_start != exc_date_times['start_time'] || rule_end != exc_date_times['end_time'] ) {
+                  if (events[i]['description'].includes('TBD')) {
+                      exc_date_times['tbd'] = true;
+                      cal_data['exceptions'][exc_date] = exc_date_times;
+                  }
+                  else if ( rule_start != exc_date_times['start_time'] || rule_end != exc_date_times['end_time'] ) {
                       cal_data['exceptions'][exc_date] = exc_date_times;
                   }
 
