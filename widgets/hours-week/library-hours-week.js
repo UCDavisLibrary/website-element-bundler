@@ -84,57 +84,65 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
             </div>
         </div>
 
-        <div id="month_container">
-        <div class="month_nav_left">
+        <div id="month_container" aria-label="Select a day from calendar below to view library hours for that date">
+        <div class="month_nav_left" role="button" aria-label="View Previous Month">
             <i class="cork-chevron left gold" alt="past" on-click="change_month" style="cursor:pointer;"></i>
         </div>
             <template is="dom-repeat" items="{{month_array}}" as="month">
-                <div id="{{month.order}}">
+                <div id="{{month.order}}" role="table" aria-label="Calendar month">
                     <span class="title details-text" style="text-transform:none;">[[month.label]]</span>
-                    <div class="cal-row">
-                        <div class="col-header"><div class="day-text">S</div></div>
-                        <div class="col-header"><div class="day-text">M</div></div>
-                        <div class="col-header"><div class="day-text">T</div></div>
-                        <div class="col-header"><div class="day-text">W</div></div>
-                        <div class="col-header"><div class="day-text">T</div></div>
-                        <div class="col-header"><div class="day-text">F</div></div>
-                        <div class="col-header"><div class="day-text">S</div></div>
+                    <div class="cal-row" role="row">
+                        <div class="col-header" role="columnheader"><div class="day-text">S</div></div>
+                        <div class="col-header" role="columnheader"><div class="day-text">M</div></div>
+                        <div class="col-header" role="columnheader"><div class="day-text">T</div></div>
+                        <div class="col-header" role="columnheader"><div class="day-text">W</div></div>
+                        <div class="col-header" role="columnheader"><div class="day-text">T</div></div>
+                        <div class="col-header" role="columnheader"><div class="day-text">F</div></div>
+                        <div class="col-header" role="columnheader"><div class="day-text">S</div></div>
                     </div>
                     <template is="dom-repeat" items="{{month.data}}" as="week">
-                        <div class="cal-row">
+                        <div class="cal-row" role="row">
                         <template is="dom-repeat" items="{{week}}" as="day">
-                            <div locweek$= "[[day.loc_week]]" locday$= "[[day.loc_day]]" class$="[[day.is_today]] cal-day [[day.is_exception]] {{day.is_selected}} [[day.month_status]]" on-click="display_new_week">
-                                <div class$="[[day.month_status]] day-text" day$="[[day.date_json]]">[[day.day]]</div>
+                            <div locweek$= "[[day.loc_week]]"
+                                locday$= "[[day.loc_day]]"
+                                class$="[[day.is_today]] cal-day [[day.is_exception]] {{day.is_selected}} [[day.month_status]]"
+                                on-click="display_new_week"
+                                role="cell">
+                                <div class$="[[day.month_status]] day-text"
+                                    day$="[[day.date_json]]"
+                                    role="button">[[day.day]]</div>
                             </div>
                         </template>
                         </div>
                     </template>
                 </div>
             </template>
-            <div class="month_nav_right">
+            <div class="month_nav_right" role="button" aria-label="View Next Month">
                 <i class="cork-chevron right gold" alt="future" on-click="change_month" style="cursor:pointer;"></i>
             </div>
         </div>
 
         <div id="view_desktop">
-        <div class="hours-table">
-            <div class="hours-tr">
-            <div class="hours-th"><h4 style="margin-bottom:0px;">[[_format_header(week_array)]]</h4></div>
+        <div class="hours-table" role="table" aria-label="Hours table for week containing the selected day">
+            <div class="hours-tr" role="row">
+            <div class="hours-th" role="columnheader"><h4 style="margin-bottom:0px;">[[_format_header(week_array)]]</h4></div>
             <template is="dom-repeat" items="{{week_array}}">
                 <div class$="[[item.is_today]] hours-th"style="line-height: 18px;"><h4>[[item.day_str]]</h4>
                 <span class="details-text" style="text-transform:none;">[[item.month_str]] [[item.day]]</span></div>
             </template>
             </div>
             <template is="dom-repeat" items="{{hours_this_week}}" sort=sort_hours>
-            <div class="hours-tr">
-                <div class="hours-td">
+            <div class="hours-tr" role="row">
+                <div class="hours-td" role="rowheader">
                     <a class$="[[item.type]]" href$=[[item.url]]>
                     <img  class="status-icon" src$=[[item.icon_url]] alt$=[[item.status]]>
                     [[item.title]]
                     </a>
                 </div>
                 <template is="dom-repeat" items="{{item.hours}}" as="hours">
-                    <div class$="[[hours.hours.status]] [[hours.is_today]] hours-td">
+                    <div class$="[[hours.hours.status]] [[hours.is_today]] hours-td role="cell""
+                        aria-label$="Hours for [[item.title]] on [[hours.date.month_str]] [[hours.date.day]], [[hours.date.year]]"
+                        >
                         <span class="keep-together">[[hours.display_string.open]]</span>
                         <span class="keep-together">[[hours.display_string.close]]</span>
                     </div>
@@ -144,7 +152,7 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
         </div>
         </div>
 
-        <div id="view_tablet">
+        <div id="view_tablet" aria-label="Hours for week containing the selected day">
         <template is="dom-repeat" items="{{hours_this_week}}" sort=sort_hours>
             <a class$="[[item.type]]" href$=[[item.url]]>
             <img  class="status-icon" src$=[[item.icon_url]] alt$=[[item.status]]>
@@ -159,7 +167,9 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
                 </div>
                 <div class="hours-tr">
                     <template is="dom-repeat" items="{{item.hours}}" as="hours">
-                        <div class$="[[hours.hours.status]] [[hours.is_today]] hours-td">
+                        <div class$="[[hours.hours.status]] [[hours.is_today]] hours-td"
+                            aria-label$="Hours for [[item.title]] on [[hours.date.month_str]] [[hours.date.day]], [[hours.date.year]]"
+                        >
                             <span class="keep-together">[[hours.display_string.open]]</span>
                             <span class="keep-together">[[hours.display_string.close]]</span>
                         </div>
@@ -169,7 +179,7 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
         </template>
         </div>
 
-        <div id="view_mobile">
+        <div id="view_mobile" aria-label="Hours for week containing the selected day">
         <hr>
         <template is="dom-repeat" items="{{hours_this_week}}" sort=sort_hours>
             <a class$="[[item.type]]" href$=[[item.url]]>
@@ -178,7 +188,9 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
             </a>
             <div hidden="hidden" class="hours-table" id="[[_concat_id(item.id, 'table')]]">
             <template is="dom-repeat" items="{{item.hours}}" as="hours">
-                <div class$="[[hours.is_today]] hours-tr">
+                <div class$="[[hours.is_today]] hours-tr"
+                    aria-label$="Hours for [[item.title]] on date:"
+                >
                     <div style="width:40%;" class="hours-td"><strong>[[hours.date.day_str]]</strong> [[hours.date.month_str]] [[hours.date.day]]
                     </div>
                     <div style="width:60%;" class$="[[hours.hours.status]] hours-td">
