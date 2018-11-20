@@ -3,11 +3,12 @@ import "@ucd-lib/cork-app-utils/lib/Mixin.js"
 import '@polymer/polymer/lib/elements/dom-repeat.js';
 import '@polymer/iron-ajax/iron-ajax.js';
 import '@polymer/iron-media-query/iron-media-query.js';
+import '@polymer/iron-dropdown/iron-dropdown.js';
 
 import template from "./template.js";
 import style from "./style.js";
 
-import LightDom from './styles/light-dom.js';
+import LightDom from './light-dom.js';
 
 
 class LibrarySearchDB extends Mixin(PolymerElement)
@@ -21,11 +22,11 @@ class LibrarySearchDB extends Mixin(PolymerElement)
     return {
       subjects: {
           type: Array,
-          value: ["Any Subject"],
+          value: [],
       },
       materials: {
           type: Array,
-          value: ["Any Material"],
+          value: [],
       },
       verbose: {
         type: Boolean
@@ -50,7 +51,10 @@ class LibrarySearchDB extends Mixin(PolymerElement)
 
   ready(){
       super.ready();
-      fetch_filters();
+      if (this.verbose){
+        console.log("Advanced database search widget loaded.");
+      }
+      this.fetch_filters();
 
   }
 
@@ -73,12 +77,17 @@ class LibrarySearchDB extends Mixin(PolymerElement)
     var element = this;
 
     // Push material names to array
+    this.materials = [{"name": "Any Material", "slug": "any", "id": 0}];
+    console.log(this.materials);
     request_materials.completes.then(function(req) {
       var response = req.response;
-      req.response.map(material => element.push('materials',material.name));
+      console.log(response);
+      for (var material of response){
+        element.push('materials',material);
+      }
+      //req.response.map(material => element.push('materials',material));
 
       if (element.verbose) {
-          console.log("Materials Response: ", response);
           console.log("Materials List: ", element.materials);
       }
 
@@ -86,17 +95,27 @@ class LibrarySearchDB extends Mixin(PolymerElement)
   )
 
     // Push subject names to array
+    this.subjects = [{"name": "Any Material", "slug": "any", "id": 0}];
     request_subjects.completes.then(function(req) {
       var response = req.response;
-      req.response.map(subject => element.push('subjects',subject.name));
-
+      //req.response.map(subject => element.push('subjects',subject.name));
+      for (var subject of response){
+        element.push('subjects',subject);
+      }
       if (element.verbose) {
-          console.log("Subjects Response: ", response);
           console.log("Subjects List: ", element.subjects);
       }
 
     }, function(rejected) {}
   )
+  }
+
+  _open_dropdown(e){
+    /* Opens dropdown depending on button pressed*/
+    var drop_type = e.target.getAttribute('drop_type');
+    if (drop_type == 'materials'){
+      this.$.drop_materials.open()
+    }
   }
 
 
