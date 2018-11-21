@@ -43,7 +43,16 @@ class LibrarySearchDB extends Mixin(PolymerElement)
         type: String,
         value: "/wp/v2/categories"
       },
+      query: {
+        type: Object
+      }
     };
+  }
+
+  static get observers() {
+    return [
+        '_query_change(query.*)'
+    ]
   }
   constructor() {
       super();
@@ -54,7 +63,22 @@ class LibrarySearchDB extends Mixin(PolymerElement)
       if (this.verbose){
         console.log("Advanced database search widget loaded.");
       }
+      this.reset_query();
       this.fetch_filters();
+
+  }
+
+  reset_query(){
+    /* Restores query object and form elements to default values. */
+
+    var query = {"q": "",
+                 "material": "any",
+                 "subject": "any"
+    };
+    this.set('query', query);
+
+    this.$.materials_button.textContent = "Any Material";
+    this.$.subjects_button.textContent = "Any Subject";
 
   }
 
@@ -78,14 +102,12 @@ class LibrarySearchDB extends Mixin(PolymerElement)
 
     // Push material names to array
     this.materials = [{"name": "Any Material", "slug": "any", "id": 0}];
-    console.log(this.materials);
     request_materials.completes.then(function(req) {
       var response = req.response;
-      console.log(response);
+
       for (var material of response){
         element.push('materials',material);
       }
-      //req.response.map(material => element.push('materials',material));
 
       if (element.verbose) {
           console.log("Materials List: ", element.materials);
@@ -98,7 +120,7 @@ class LibrarySearchDB extends Mixin(PolymerElement)
     this.subjects = [{"name": "Any Material", "slug": "any", "id": 0}];
     request_subjects.completes.then(function(req) {
       var response = req.response;
-      //req.response.map(subject => element.push('subjects',subject.name));
+
       for (var subject of response){
         element.push('subjects',subject);
       }
@@ -110,12 +132,41 @@ class LibrarySearchDB extends Mixin(PolymerElement)
   )
   }
 
+  _query_change(){
+    /* Observer for when query object changes. */
+    if ( this.verbose ) {
+      console.log("Query changed: ", this.query);
+    }
+  }
+
   _open_dropdown(e){
-    /* Opens dropdown depending on button pressed*/
+    /* Listener. Opens dropdown depending on button pressed. */
     var drop_type = e.target.getAttribute('drop_type');
     if (drop_type == 'materials'){
-      this.$.drop_materials.open()
+      this.$.drop_materials.open();
     }
+    else if (drop_type == 'subjects') {
+      this.$.drop_subjects.open();
+    }
+  }
+
+  _select_dropdown(e){
+    /* Listener for material/subject dropdowns. Updates query object. */
+    var drop_type = e.target.getAttribute('drop_type');
+    var selection = e.target.getAttribute('slug');
+    var selection_pretty = e.target.textContent;
+
+    if (drop_type == 'materials'){
+      this.$.materials_button.textContent = selection_pretty;
+      this.$.drop_materials.close();
+      this.set('query.material', selection);
+    }
+    else if (drop_type == 'subjects') {
+      this.$.subjects_button.textContent = selection_pretty;
+      this.$.drop_subjects.close();
+      this.set('query.subject', selection);
+    }
+
   }
 
 
