@@ -4,6 +4,9 @@ import '@polymer/polymer/lib/elements/dom-repeat.js';
 import '@polymer/iron-ajax/iron-ajax.js';
 import '@polymer/iron-media-query/iron-media-query.js';
 import '@polymer/iron-dropdown/iron-dropdown.js';
+import '@polymer/iron-input/iron-input.js';
+import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
+import '@polymer/iron-label/iron-label.js';
 
 import template from "./template.js";
 import style from "./style.js";
@@ -31,9 +34,13 @@ class LibrarySearchDB extends Mixin(PolymerElement)
       verbose: {
         type: Boolean
       },
+      library_url: {
+          type: String,
+          value: "https://www.library.ucdavis.edu"
+      },
       api_base_url: {
         type: String,
-        value: "https://www.library.ucdavis.edu/wp-json"
+        value: "/wp-json"
       },
       api_materials_url: {
         type: String,
@@ -43,8 +50,15 @@ class LibrarySearchDB extends Mixin(PolymerElement)
         type: String,
         value: "/wp/v2/categories"
       },
+      vpn_url: {
+        type: String,
+        computed: "_vpn_url(library_url)"
+      },
       query: {
         type: Object
+      },
+      a11y_target: {
+        type: Object,
       }
     };
   }
@@ -60,11 +74,18 @@ class LibrarySearchDB extends Mixin(PolymerElement)
 
   ready(){
       super.ready();
+      this.a11y_target = this.$.db_search_input;
+      var element = this;
       if (this.verbose){
         console.log("Advanced database search widget loaded.");
       }
       this.reset_query();
       this.fetch_filters();
+
+      this.$.db_search_input.addEventListener('iron-input-validate', function(){
+        /* Listener for search box. */
+        element.set("query.q", element.$.db_search_input.bindValue);
+      })
 
   }
 
@@ -73,7 +94,9 @@ class LibrarySearchDB extends Mixin(PolymerElement)
 
     var query = {"q": "",
                  "material": "any",
-                 "subject": "any"
+                 "subject": "any",
+                 "check_everyone": false,
+                 "check_vpn": false
     };
     this.set('query', query);
 
@@ -82,13 +105,39 @@ class LibrarySearchDB extends Mixin(PolymerElement)
 
   }
 
+  submit_query(){
+    /* Constructs query string from object and redirects traffic */
+
+    var send_traffic_to = this.library_url + "/?post_type=database";
+
+    if (this.query['q'] != "") {
+        send_traffic_to += "&s=" + encodeURIComponent(this.query['q']);
+    }
+    if (this.query['material'] != "any") {
+        send_traffic_to += "&material=" + encodeURIComponent(this.query['material']);
+    }
+    if (this.query['subject'] != "any") {
+        send_traffic_to += "&subject=" + encodeURIComponent(this.query['subject']);
+    }
+    if (this.query['check_everyone'] == true) {
+        send_traffic_to += "&everyone=true";
+    }
+    if (this.query['check_vpn'] == true) {
+        send_traffic_to += "&vpn=true";
+    }
+    if ( this.verbose ) {
+        console.log(send_traffic_to);
+    }
+
+  }
+
   fetch_filters(){
     /* Queries Wordpress API for materials and subject taxonomy items*/
 
     // Set urls
     let url_params = "?per_page=100";
-    this.$.ajax_materials.url = this.api_base_url + this.api_materials_url + url_params;
-    this.$.ajax_subjects.url = this.api_base_url + this.api_subjects_url + url_params;
+    this.$.ajax_materials.url = this.library_url + this.api_base_url + this.api_materials_url + url_params;
+    this.$.ajax_subjects.url = this.library_url + this.api_base_url + this.api_subjects_url + url_params;
 
     if ( this.verbose ){
       this.$.ajax_materials.verbose = true;
@@ -130,6 +179,16 @@ class LibrarySearchDB extends Mixin(PolymerElement)
 
     }, function(rejected) {}
   )
+  }
+
+  _vpn_url(base_url){
+    return base_url + "/service/connect-from-off-campus";
+  }
+
+  _toggle_checkbox(e){
+      /* Listener for updating query object from checkboxes */
+      var check_id =  e.target.getAttribute('id');
+      this.set('query.' + check_id, this.$[check_id].checked);
   }
 
   _query_change(){

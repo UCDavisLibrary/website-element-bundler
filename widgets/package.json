@@ -5,11 +5,21 @@
   "license": "MIT",
   "flat": true,
   "dependencies": {
+    "@polymer/iron-a11y-keys": "^3.0.1",
     "@polymer/iron-ajax": "^3.0.0-pre.19",
+    "@polymer/iron-checked-element-behavior": "^3.0.1",
+    "@polymer/iron-dropdown": "^3.0.1",
     "@polymer/iron-icon": "^3.0.0-pre.19",
+    "@polymer/iron-input": "^3.0.1",
+    "@polymer/iron-label": "^3.0.1",
     "@polymer/iron-media-query": "^3.0.0-pre.19",
     "@polymer/iron-pages": "^3.0.0-pre.19",
     "@polymer/polymer": "^3.0.2",
     "@ucd-lib/cork-app-utils": "^3.1.0"
+  },
+  "resolutions": {
+    "@polymer/iron-resizable-behavior": "3.0.1",
+    "@polymer/iron-selector": "3.0.1",
+    "@polymer/iron-meta": "3.0.1"
   }
 }
