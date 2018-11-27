@@ -49,6 +49,9 @@ export default /* @css */`
         text-align: left;
         font-weight: 400;
     }
+    library-search-db .dbsearch-drop button:hover {
+        background: #E9CC66;
+    }
     [slot="dropdown-content"] {
         background-color: #DAAA00;
         color: #002655;

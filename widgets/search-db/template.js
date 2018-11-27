@@ -19,8 +19,8 @@ export default /* @html */`
       <input type="checkbox" id="check_everyone" on-click="_toggle_checkbox" checked$={{query.check_everyone}}>
       <span class="checkmark_styled"></span>
     </label>
-    <label class="check_cont">Everyone
-      <input type="checkbox" id="check_vpn" on-click="_toggle_checkbox" checked$={{query.check_vpn}}> UC Davis (via <a href$="[[vpn_url]]">VPN</a>)
+    <label class="check_cont">UC Davis (via <a href$="[[vpn_url]]">VPN</a>)
+      <input type="checkbox" id="check_vpn" on-click="_toggle_checkbox" checked$={{query.check_vpn}}>
       <span class="checkmark_styled"></span>
     </label>
   </div>

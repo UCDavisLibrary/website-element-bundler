@@ -95,8 +95,8 @@ class LibrarySearchDB extends Mixin(PolymerElement)
     var query = {"q": "",
                  "material": "any",
                  "subject": "any",
-                 "check_everyone": false,
-                 "check_vpn": false
+                 "check_everyone": true,
+                 "check_vpn": true
     };
     this.set('query', query);
 
