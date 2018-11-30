@@ -4,10 +4,23 @@ export default /* @css */`
         width: 100%;
         min-width: 450px;
     }
+    library-search-db .help {
+        padding-bottom: 20px;
+    }
     library-search-db iron-label {
         font-weight: 600;
         display: block;
         margin-bottom: 6px;
+    }
+    library-search-db iron-label.ontop {
+        width:100%;
+    }
+    library-search-db .dbsearch_row {
+        display: flex;
+        flex-flow: row wrap;
+    }
+    library-search-db iron-dropdown {
+        width: 250px;
     }
 
     library-search-db .search-btn {
@@ -24,6 +37,9 @@ export default /* @css */`
         cursor: pointer;
         border-radius: 0;
     }
+    library-search-db #db_search_input {
+        flex: 1;
+    }
     library-search-db #db_search_input input {
         box-sizing: border-box;
         display: block;
@@ -36,18 +52,35 @@ export default /* @css */`
         font-size: 1rem;
         line-height: 1.25;
         background-clip: padding-box;
+        width: 100%;
+        min-width: 350px;
+    }
+    library-search-db #db_search_cont {
+        flex: 1;
+        margin-top: 15px;
+    }
+    library-search-db #db_search_cont #input_and_button {
+        display: flex;
+    }
+    library-search-db .dbsearch-drop {
+        margin-right: 15px;
+        margin-top: 15px;
+        width: 250px;
     }
     library-search-db .dbsearch-drop button {
         background: #DAAA00;
         color: #002655;
-        min-width: 200px;
+        min-width: 250px;
         padding: 5px;
+        padding-left: 15px;
         font-size: 1rem;
         border: 1px solid transparent;
         cursor: pointer;
         border-radius: 0;
         text-align: left;
         font-weight: 400;
+        height: 53px;
+        width: 100%;
     }
     library-search-db .dbsearch-drop button:hover {
         background: #E9CC66;
@@ -61,6 +94,7 @@ export default /* @css */`
     }
     library-search-db .dbsearch-drop li {
         padding: 5px;
+        padding-left: 15px;
         font-size: 1rem;
         border: 1px solid transparent;
         cursor: pointer;
@@ -77,15 +111,17 @@ export default /* @css */`
         background-color: #E9CC66;
     }
     library-search-db .check_cont {
-        display: block;
+        display: inline-block;
         position: relative;
         padding-left: 30px;
-        margin-bottom: 12px;
+        margin-bottom: 0px;
         cursor: pointer;
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
+        margin-top: 0px;
+        margin-left: 15px;
     }
     library-search-db .check_cont input {
         position: absolute;
@@ -100,10 +136,11 @@ export default /* @css */`
         left: 0;
         height: 20px;
         width: 20px;
-        background-color: #002655;
+        background-color: #fff;
+        border: 1px solid #d8d8d8;
     }
     library-search-db .check_cont:hover input ~ .checkmark_styled {
-        background-color: #335379;
+        background-color: #002655;
     }
     library-search-db .check_cont input:checked ~ .checkmark_styled {
         background-color: #002655;
@@ -126,6 +163,20 @@ export default /* @css */`
         -webkit-transform: rotate(45deg);
         -ms-transform: rotate(45deg);
         transform: rotate(45deg);
+    }
+
+    @media(max-width: 500px){
+        library-search-db .dbsearch-drop {
+            width: 100%;
+            margin-right: 0px;
+        }
+
+        library-search-db #db_search_input input {
+            min-width: 100px;
+        }
+        library-search-db iron-dropdown {
+            width: 100%;
+        }
     }
 </style>
 `
