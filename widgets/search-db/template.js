@@ -31,7 +31,13 @@ export default /* @html */`
 
       <div class="dbsearch-drop">
         <iron-label for="materials_button" class="ontop">Materials</iron-label>
-        <button id="materials_button" on-click="_open_dropdown" drop_type="materials">Any Material</button>
+        <div class="dbsearch_button"
+             id="materials_button"
+             on-click="_open_dropdown"
+             drop_type="materials"
+             role="button">Any Material
+        </div>
+        <div class="arrowdown"></div>
         <iron-dropdown id="drop_materials" horizontal-align="left" vertical-align="bottom">
           <ul slot="dropdown-content" tabindex="0">
             <template is="dom-repeat" items = "[[materials]]" as="material">
@@ -45,7 +51,13 @@ export default /* @html */`
 
       <div class="dbsearch-drop">
         <iron-label for="subjects_button" class="ontop">Subjects</iron-label>
-        <button id="subjects_button" on-click="_open_dropdown" drop_type="subjects">Any Subject</button>
+        <div class="dbsearch_button"
+             id="subjects_button"
+             on-click="_open_dropdown"
+             drop_type="subjects"
+             role="button">Any Subject
+        </div>
+        <div class="arrowdown"></div>
         <iron-dropdown id="drop_subjects" horizontal-align="left" vertical-align="bottom">
           <ul slot="dropdown-content" tabindex="0">
             <template is="dom-repeat" items = "[[subjects]]" as="subject">

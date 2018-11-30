@@ -66,13 +66,15 @@ export default /* @css */`
         margin-right: 15px;
         margin-top: 15px;
         width: 250px;
+        position: relative;
     }
-    library-search-db .dbsearch-drop button {
+    library-search-db .dbsearch_button {
         background: #DAAA00;
         color: #002655;
         min-width: 250px;
         padding: 5px;
         padding-left: 15px;
+        padding-right: 25px;
         font-size: 1rem;
         border: 1px solid transparent;
         cursor: pointer;
@@ -81,6 +83,10 @@ export default /* @css */`
         font-weight: 400;
         height: 53px;
         width: 100%;
+        line-height: 40px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     library-search-db .dbsearch-drop button:hover {
         background: #E9CC66;
@@ -164,8 +170,21 @@ export default /* @css */`
         -ms-transform: rotate(45deg);
         transform: rotate(45deg);
     }
+    library-search-db .arrowdown {
+        margin-right: 12px;
+        width: 0px;
+        height: 0px;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 8px solid #002655;
+        display: inline-block;
+        pointer-events: none;
+        position: absolute;
+        right: 0px;
+        bottom: 22px;
+    }
 
-    @media(max-width: 500px){
+    @media(max-width: 570px){
         library-search-db .dbsearch-drop {
             width: 100%;
             margin-right: 0px;
