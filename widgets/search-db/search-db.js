@@ -54,6 +54,10 @@ class LibrarySearchDB extends Mixin(PolymerElement)
         type: String,
         computed: "_vpn_url(library_url)"
       },
+      url_args: {
+        type: Object,
+        computed: "getUrlVars()"
+      },
       query: {
         type: Object
       },
@@ -76,15 +80,46 @@ class LibrarySearchDB extends Mixin(PolymerElement)
       super.ready();
       this.a11y_target = this.$.db_search_input;
       var element = this;
-      if (this.verbose){
-        console.log("Advanced database search widget loaded.");
-      }
       this.reset_query();
       this.fetch_filters();
 
+      // Parse url params for recognized query parameters
+      var parsed_args = {};
+      for (const [key, value] of Object.entries(this.url_args)){
+          if ( Object.keys(this.query).includes(key) ) {
+              parsed_args[key] = value;
+          }
+      }
+      if (Object.keys(parsed_args).length > 0) {
+          for (var [key, value] of Object.entries(parsed_args)){
+              if (key.startsWith("check_")) {
+                  value = false
+              }
+
+              if (key == "s") {
+                  this.$.db_search_input.bindValue = value;
+              }
+
+              //TODO: Update drop downs. need to wait for API call
+              // put in request then statement
+              // if query.material != any etc
+
+
+              this.set('query.' + key, value);
+          }
+      }
+
+
+
+      if (this.verbose){
+        console.log("Advanced database search widget loaded.");
+        console.log("URL Args: ", this.url_args);
+        console.log("Recognized URL args", parsed_args);
+      }
+
       this.$.db_search_input.addEventListener('iron-input-validate', function(){
         /* Listener for search box. */
-        element.set("query.q", element.$.db_search_input.bindValue);
+        element.set("query.s", element.$.db_search_input.bindValue);
       })
 
   }
@@ -92,7 +127,7 @@ class LibrarySearchDB extends Mixin(PolymerElement)
   reset_query(){
     /* Restores query object and form elements to default values. */
 
-    var query = {"q": "",
+    var query = {"s": "",
                  "material": "any",
                  "subject": "any",
                  "check_everyone": true,
@@ -110,8 +145,8 @@ class LibrarySearchDB extends Mixin(PolymerElement)
 
     var send_traffic_to = this.library_url + "/?post_type=database";
 
-    if (this.query['q'] != "") {
-        send_traffic_to += "&s=" + encodeURIComponent(this.query['q']);
+    if (this.query['s'] != "") {
+        send_traffic_to += "&s=" + encodeURIComponent(this.query['s']);
     }
     if (this.query['material'] != "any") {
         send_traffic_to += "&material=" + encodeURIComponent(this.query['material']);
@@ -119,11 +154,11 @@ class LibrarySearchDB extends Mixin(PolymerElement)
     if (this.query['subject'] != "any") {
         send_traffic_to += "&subject=" + encodeURIComponent(this.query['subject']);
     }
-    if (this.query['check_everyone'] == true) {
-        send_traffic_to += "&everyone=true";
+    if (this.query['check_everyone'] == false) {
+        send_traffic_to += "&everyone=false";
     }
-    if (this.query['check_vpn'] == true) {
-        send_traffic_to += "&vpn=true";
+    if (this.query['check_vpn'] == false) {
+        send_traffic_to += "&vpn=false";
     }
     if ( this.verbose ) {
         console.log(send_traffic_to);
@@ -180,6 +215,16 @@ class LibrarySearchDB extends Mixin(PolymerElement)
     }, function(rejected) {}
   )
   }
+
+  getUrlVars() {
+    var vars = {};
+    var url = decodeURIComponent(window.location.href);
+    var parts = url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+
 
   _vpn_url(base_url){
     return base_url + "/service/connect-from-off-campus";
