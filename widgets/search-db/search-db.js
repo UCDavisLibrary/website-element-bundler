@@ -44,11 +44,11 @@ class LibrarySearchDB extends Mixin(PolymerElement)
       },
       api_materials_url: {
         type: String,
-        value: "/wp/v2/categories"
+        value: "/wp/v2/material"
       },
       api_subjects_url: {
         type: String,
-        value: "/wp/v2/categories"
+        value: "/wp/v2/ucd-subject"
       },
       vpn_url: {
         type: String,
@@ -78,6 +78,9 @@ class LibrarySearchDB extends Mixin(PolymerElement)
 
   ready(){
       super.ready();
+      if (this.verbose) {
+        console.log("Advanced database search widget loaded.");
+      }
       this.a11y_target = this.$.db_search_input;
       var element = this;
       this.reset_query();
@@ -92,18 +95,13 @@ class LibrarySearchDB extends Mixin(PolymerElement)
       }
       if (Object.keys(parsed_args).length > 0) {
           for (var [key, value] of Object.entries(parsed_args)){
-              if (key.startsWith("check_")) {
+              if (key == "everyone" || key == "vpn") {
                   value = false
               }
 
               if (key == "s") {
                   this.$.db_search_input.bindValue = value;
               }
-
-              //TODO: Update drop downs. need to wait for API call
-              // put in request then statement
-              // if query.material != any etc
-
 
               this.set('query.' + key, value);
           }
@@ -112,7 +110,6 @@ class LibrarySearchDB extends Mixin(PolymerElement)
 
 
       if (this.verbose){
-        console.log("Advanced database search widget loaded.");
         console.log("URL Args: ", this.url_args);
         console.log("Recognized URL args", parsed_args);
       }
@@ -128,10 +125,10 @@ class LibrarySearchDB extends Mixin(PolymerElement)
     /* Restores query object and form elements to default values. */
 
     var query = {"s": "",
-                 "material": "any",
-                 "subject": "any",
-                 "check_everyone": true,
-                 "check_vpn": true
+                 "dbmaterial": "any",
+                 "dbsubject": "any",
+                 "everyone": true,
+                 "vpn": true
     };
     this.set('query', query);
 
@@ -144,20 +141,18 @@ class LibrarySearchDB extends Mixin(PolymerElement)
     /* Constructs query string from object and redirects traffic */
 
     var send_traffic_to = this.library_url + "/?post_type=database";
+    send_traffic_to += "&s=" + encodeURIComponent(this.query['s']);
 
-    if (this.query['s'] != "") {
-        send_traffic_to += "&s=" + encodeURIComponent(this.query['s']);
+    if (this.query['dbmaterial'] != "any") {
+        send_traffic_to += "&dbmaterial=" + encodeURIComponent(this.query['dbmaterial']);
     }
-    if (this.query['material'] != "any") {
-        send_traffic_to += "&material=" + encodeURIComponent(this.query['material']);
+    if (this.query['dbsubject'] != "any") {
+        send_traffic_to += "&dbsubject=" + encodeURIComponent(this.query['dbsubject']);
     }
-    if (this.query['subject'] != "any") {
-        send_traffic_to += "&subject=" + encodeURIComponent(this.query['subject']);
-    }
-    if (this.query['check_everyone'] == false) {
+    if (this.query['everyone'] == false) {
         send_traffic_to += "&everyone=false";
     }
-    if (this.query['check_vpn'] == false) {
+    if (this.query['vpn'] == false) {
         send_traffic_to += "&vpn=false";
     }
     if ( this.verbose ) {
@@ -175,6 +170,8 @@ class LibrarySearchDB extends Mixin(PolymerElement)
     this.$.ajax_subjects.url = this.library_url + this.api_base_url + this.api_subjects_url + url_params;
 
     if ( this.verbose ){
+      console.log("Fetching materials list from", this.$.ajax_materials.url);
+      console.log("Fetching subjects list from", this.$.ajax_subjects.url);
       this.$.ajax_materials.verbose = true;
       this.$.ajax_subjects.verbose = true;
     }
@@ -190,6 +187,12 @@ class LibrarySearchDB extends Mixin(PolymerElement)
       var response = req.response;
 
       for (var material of response){
+        if (material.count <= 0) {
+            continue;
+        }
+        if (material.slug == element.query.dbmaterial) {
+          element.$.materials_button.textContent = material.name;
+        }
         element.push('materials',material);
       }
 
@@ -206,6 +209,12 @@ class LibrarySearchDB extends Mixin(PolymerElement)
       var response = req.response;
 
       for (var subject of response){
+        if (subject.count <= 0 || subject.parent == 0) {
+            continue;
+        }
+        if (subject.slug == element.query.dbsubject) {
+          element.$.subjects_button.textContent = subject.name;
+        }
         element.push('subjects',subject);
       }
       if (element.verbose) {
@@ -233,7 +242,8 @@ class LibrarySearchDB extends Mixin(PolymerElement)
   _toggle_checkbox(e){
       /* Listener for updating query object from checkboxes */
       var check_id =  e.target.getAttribute('id');
-      this.set('query.' + check_id, this.$[check_id].checked);
+      let prop = 'query.' + check_id.split("_")[1];
+      this.set(prop, this.$[check_id].checked);
   }
 
   _query_change(){
@@ -263,12 +273,12 @@ class LibrarySearchDB extends Mixin(PolymerElement)
     if (drop_type == 'materials'){
       this.$.materials_button.textContent = selection_pretty;
       this.$.drop_materials.close();
-      this.set('query.material', selection);
+      this.set('query.dbmaterial', selection);
     }
     else if (drop_type == 'subjects') {
       this.$.subjects_button.textContent = selection_pretty;
       this.$.drop_subjects.close();
-      this.set('query.subject', selection);
+      this.set('query.dbsubject', selection);
     }
 
   }

@@ -17,11 +17,11 @@ export default /* @html */`
       <iron-label for="availability_cont">Available to:</iron-label>
       <div id="availability_cont">
         <label class="check_cont">Everyone
-          <input type="checkbox" id="check_everyone" on-click="_toggle_checkbox" checked$={{query.check_everyone}}>
+          <input type="checkbox" id="check_everyone" on-click="_toggle_checkbox" checked$={{query.everyone}}>
           <span class="checkmark_styled"></span>
         </label>
-        <label class="check_cont">UC Davis (via <a href$="[[vpn_url]]">VPN</a>)
-          <input type="checkbox" id="check_vpn" on-click="_toggle_checkbox" checked$={{query.check_vpn}}>
+        <label class="check_cont">UC Davis Campus(or <a href$="[[vpn_url]]">VPN</a>)
+          <input type="checkbox" id="check_vpn" on-click="_toggle_checkbox" checked$={{query.vpn}}>
           <span class="checkmark_styled"></span>
         </label>
       </div>
