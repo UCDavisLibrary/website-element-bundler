@@ -20,7 +20,7 @@ export default /* @html */`
           <input type="checkbox" id="check_everyone" on-click="_toggle_checkbox" checked$={{query.everyone}}>
           <span class="checkmark_styled"></span>
         </label>
-        <label class="check_cont">UC Davis Campus(or <a href$="[[vpn_url]]">VPN</a>)
+        <label class="check_cont">UC Davis Campus (or <a href$="[[vpn_url]]">VPN</a>)
           <input type="checkbox" id="check_vpn" on-click="_toggle_checkbox" checked$={{query.vpn}}>
           <span class="checkmark_styled"></span>
         </label>
@@ -28,26 +28,6 @@ export default /* @html */`
   </div>
 
   <div class="dbsearch_row">
-
-      <div class="dbsearch-drop">
-        <iron-label for="materials_button" class="ontop">Materials</iron-label>
-        <div class="dbsearch_button"
-             id="materials_button"
-             on-click="_open_dropdown"
-             drop_type="materials"
-             role="button">Any Material
-        </div>
-        <div class="arrowdown"></div>
-        <iron-dropdown id="drop_materials" horizontal-align="left" vertical-align="bottom">
-          <ul slot="dropdown-content" tabindex="0">
-            <template is="dom-repeat" items = "[[materials]]" as="material">
-              <li on-click="_select_dropdown" drop_type="materials" slug$=[[material.slug]]>[[material.name]]</li>
-            </template>
-          </ul>
-
-        </iron-dropdown>
-
-      </div>
 
       <div class="dbsearch-drop">
         <iron-label for="subjects_button" class="ontop">Subjects</iron-label>
@@ -58,7 +38,7 @@ export default /* @html */`
              role="button">Any Subject
         </div>
         <div class="arrowdown"></div>
-        <iron-dropdown id="drop_subjects" horizontal-align="left" vertical-align="bottom">
+        <iron-dropdown id="drop_subjects" horizontal-align="left" vertical-align="top">
           <ul slot="dropdown-content" tabindex="0">
             <template is="dom-repeat" items = "[[subjects]]" as="subject">
               <li on-click="_select_dropdown" drop_type="subjects" slug$=[[subject.slug]]>[[subject.name]]</li>
@@ -68,6 +48,27 @@ export default /* @html */`
         </iron-dropdown>
 
       </div>
+
+      <div class="dbsearch-drop">
+        <iron-label for="materials_button" class="ontop">Materials</iron-label>
+        <div class="dbsearch_button"
+             id="materials_button"
+             on-click="_open_dropdown"
+             drop_type="materials"
+             role="button">Any Material
+        </div>
+        <div class="arrowdown"></div>
+        <iron-dropdown id="drop_materials" horizontal-align="left" vertical-align="top">
+          <ul slot="dropdown-content" tabindex="0">
+            <template is="dom-repeat" items = "[[materials]]" as="material">
+              <li on-click="_select_dropdown" drop_type="materials" slug$=[[material.slug]]>[[material.name]]</li>
+            </template>
+          </ul>
+
+        </iron-dropdown>
+
+      </div>
+
       <div id="db_search_cont">
         <iron-a11y-keys id="db_a11y"
                         target="[[a11y_target]]"

@@ -158,6 +158,7 @@ class LibrarySearchDB extends Mixin(PolymerElement)
     if ( this.verbose ) {
         console.log(send_traffic_to);
     }
+    window.location = send_traffic_to;
 
   }
 
@@ -204,7 +205,7 @@ class LibrarySearchDB extends Mixin(PolymerElement)
   )
 
     // Push subject names to array
-    this.subjects = [{"name": "Any Material", "slug": "any", "id": 0}];
+    this.subjects = [{"name": "Any Subject", "slug": "any", "id": 0}];
     request_subjects.completes.then(function(req) {
       var response = req.response;
 
