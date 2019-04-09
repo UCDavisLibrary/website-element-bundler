@@ -16,4 +16,8 @@ if( window.elementBundles ) {
   if( window.elementBundles.indexOf('hours-single') > -1 ) {
     import(/* webpackChunkName: "hours-single" */ './widgets/hours-single/library-hours-single.js');
   }
+
+  if( window.elementBundles.indexOf('mobile-nav') > -1 ) {
+    import(/* webpackChunkName: "mobile-nav" */ './widgets/mobile-nav/ucd-library-mobile-nav.js');
+  }
 }

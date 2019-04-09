@@ -38,12 +38,14 @@ Now test on the website.
 
 # Using elements with the library website.
 
-First, define the bundles you want to use in the page and add the element loader in the twig file.  The element loader will first pull in the WebComponent polyfills if required, then it will pull in required bundles.
+First, define the bundles you want to use in the page by appending your element to the `elementBundles` variable, which is instantiated in the head of the base twig.
 
 ```twig
-<script>var elementBundles = ['search', 'hours-week'];</script>
+<script>elementBundles.push('search');</script>
 {% include 'includes/element-loader.twig' %}
 ```
+
+The element loader is called in the fotter of the base twig and will first pull in the WebComponent polyfills if required, then it will pull in required bundles.
 
 Now simply add the element to the page.
 
