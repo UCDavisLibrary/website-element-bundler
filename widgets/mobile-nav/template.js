@@ -1,3 +1,8 @@
 export default /* @html */`
-<div>Hello World</div>
+<iron-ajax
+    id="ajax_menu"
+    handle-as="json"
+    rejectWithRequest
+    debounce-duration="300">
+</iron-ajax>
 `
