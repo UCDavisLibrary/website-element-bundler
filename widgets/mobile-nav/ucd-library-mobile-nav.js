@@ -57,7 +57,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
         }
 
       }
-
+      this.$.ajax_descendents.url = this.library_url + this.api_base_url + this.api_pages_url;
       this.set('menu_main', this.get_wp_menu('main-nav'));
       //this.set('menu_info', this.get_wp_menu('info'));
 
@@ -109,7 +109,13 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
                   if (in_output == true) {
                       for (var child_link of child_response.items) {
                           let child_link_filtered = element._parse_menu_item(child_link);
+                          if ((child_link_filtered.object == 'page') && (submenu != 'library-locations')) {
+                              child_link_filtered['children'] = element.get_page_descendents(child_link_filtered['id']);
+                              child_link_filtered['retrieved_children'] = true;
+                          }
+
                           output[i]['children'].push(child_link_filtered)
+                          output[i]['retrieved_children'] = true;
                       }
                   }
 
@@ -125,24 +131,65 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       }
   }
 
+  get_page_descendents(id, all_descendents=false){
+      /* Get children or all descendents of a page */
+      let output = [];
+
+      // Set up API query and make call
+      let params = {"parent":id, "_fields": "title,id,link",
+                    "per_page": "20", "orderby":"title", "order":"asc"};
+      this.$.ajax_descendents.params = params;
+      let request = this.$.ajax_descendents.generateRequest();
+      var element = this;
+      request.completes.then(function(req) {
+          var response = req.response;
+          for (var page of response) {
+              var page_filtered = element._parse_page_item(page);
+              if (all_descendents) {
+                  page_filtered['children'] = element.get_page_descendents(page_filtered['id'], all_descendents);
+                  page_filtered['retrieved_children'] = true;
+              }
+              output.push(page_filtered);
+          }
+
+      }, function(rejected) {}
+    )
+
+    return output;
+
+  }
+
   menu_url(menu){
       /* Constructs menu api url */
       let output = this.library_url + this.api_base_url + this.api_menu_url;
       output += ("/" + menu);
-      return output
+      return output;
   }
 
   _parse_menu_item(item){
       /* Extract relevant data from a menu item */
-      let output = {}
+      let output = {};
       output['id'] = item.object_id;
       output['object'] = item.object;
       output['link'] = item.url;
       output['label'] = item.title;
       output['order'] = item.menu_order;
       output['children'] = [];
+      output['retrieved_children'] = false;
 
-      return output
+      return output;
+  }
+
+  _parse_page_item(item){
+      /* Extract relevant data from a page item */
+      let output = {};
+      output['id'] = item['id'];
+      output['object'] = 'page';
+      output['link'] = item['title']['rendered'];
+      output['children'] = [];
+      output['retrieved_children'] = false;
+
+      return output;
   }
 
 
