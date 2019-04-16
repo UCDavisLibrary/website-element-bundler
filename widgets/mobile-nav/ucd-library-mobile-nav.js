@@ -1,4 +1,5 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+import { MutableData } from '@polymer/polymer/lib/mixins/mutable-data.js';
 import "@ucd-lib/cork-app-utils/lib/Mixin.js"
 import '@polymer/polymer/lib/elements/dom-repeat.js';
 import '@polymer/iron-ajax/iron-ajax.js';
@@ -11,7 +12,7 @@ import style from "./style.js";
 import LightDom from './light-dom.js';
 
 class UCDLibraryMobileNav extends Mixin(PolymerElement)
-.with(LightDom) {
+.with(LightDom, MutableData) {
     static get template(){
         return html([template + style]);
       }
@@ -74,8 +75,12 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
     },
       all_menus_retrieved: {
         type: Boolean,
-        computed: "_all_menus_retrieved(menus_retrieved.*)"
-    }
+        computed: "_all_menus_retrieved(menus_retrieved)"
+    },
+      is_hierarchical: {
+        type: Boolean,
+        observer: "_is_hierarchical"
+      }
 
     };
   }
@@ -95,25 +100,61 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
                    'info': ['lang-prize']};
       this.set('menus_to_retrieve', menus);
       this.$.ajax_descendents.url = this.library_url + this.api_base_url + this.api_pages_url;
-      let menu = [];
-      //let menu = this.get_wp_menu('main-nav');
-      menu = menu.concat(this.get_wp_menu('main-nav'))
-      menu = menu.concat(this.get_wp_menu('info'));
-      //this.get_wp_menu('info');
-      this.set('menu_data', menu);
-
+      this.get_wp_menu('main-nav');
+      this.get_wp_menu('info');
 
       // Check if current page is hierarchical
       // Get parents(all) and children of page
-      if (this.verbose) {
-        if (typeof WP_POST_ID !== 'undefined'){
-            console.log("Page id:", WP_POST_ID);
-        }
-        if (typeof WP_POST_TYPE !== 'undefined'){
-            console.log("Page type:", WP_POST_TYPE);
-        }
+      if (WP_POST_TYPE == 'page'){
+          this.get_current_page();
+      }
+      else {
+          this.set('is_hierarchical', false);
       }
 
+  }
+
+  get_current_page(){
+      if (this.verbose) {
+          console.log("Retrieving structure for page id", WP_POST_ID);
+      }
+
+      // Set up API query and make call
+      let params = {"_fields": "title,id,link,parent"};
+      this.$.ajax_page.url = this.page_url(WP_POST_ID);
+      this.$.ajax_page.params = params;
+      let request = this.$.ajax_page.generateRequest();
+      var element = this;
+      request.completes.then(function(req){
+          var response = req.response;
+          output = element._parse_page_item(response);
+
+          // Get all parents (if any)
+          if (response.parent != 0) {
+              this.set('is_hierarchical', true);
+          }
+          else {
+              this.set('is_hierarchical', false);
+          }
+
+          // Get all children (if any)
+          output['children'] = element.get_page_descendents(output['id'])
+          output['retrieved_children'] = true;
+
+          if (element.verbose) {
+              console.log("Current page object:", output);
+          }
+      }, function(rejected) {}
+    )
+
+
+  }
+
+  _is_hierarchical(newValue, oldValue) {
+      /* Observer that fires depending on if the current page needs a menu */
+      if (this.verbose) {
+          console.log(`Current post (${WP_POST_ID}) hierarchy status:`, newValue);
+      }
   }
 
   get_wp_menu(menu) {
@@ -168,9 +209,18 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
                       }
                   }
                   element.push("menus_retrieved", [menu, submenu]);
+                  element.notifyPath("menus_retrieved");
 
               }, function(rejected) {}
           )
+          }
+
+          // Constuct main data array. ensure main-nav is displayed first
+          if (menu == 'main-nav') {
+              element.menu_data = output.concat(element.menu_data);
+          }
+          else {
+              element.menu_data = element.menu_data.concat(output);
           }
 
         }, function(rejected) {}
@@ -216,6 +266,13 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       return output;
   }
 
+  page_url(page){
+      /* Constructs page api url */
+      let output = this.library_url + this.api_base_url + this.api_pages_url;
+      output += ("/" + page);
+      return output;
+    }
+
   _parse_menu_item(item){
       /* Extract relevant data from a menu item */
       let output = {};
@@ -252,9 +309,13 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
   _all_menus_retrieved(menus_retrieved) {
       /* Checks if all the main-nav menus were retrieved */
       if (this.menus_retrieved.length >= this.n_menus_to_retrieve){
+          this.menu_data.map(link => link.retrieved_children = true);
+          this.notifyPath('menu_data');
           if (this.verbose) {
-              console.log("Entire main nav menu retrieved.");
+              console.log("Entire main nav menu retrieved:", this.menu_data);
           }
+
+
           return true
       }
       else {

@@ -11,4 +11,10 @@ export default /* @html */`
     rejectWithRequest
     debounce-duration="300">
 </iron-ajax>
+<iron-ajax
+    id="ajax_page"
+    handle-as="json"
+    rejectWithRequest
+    debounce-duration="300">
+</iron-ajax>
 `
