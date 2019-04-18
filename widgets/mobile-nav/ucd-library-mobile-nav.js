@@ -90,6 +90,10 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       has_parents: {
         type: Boolean
     },
+      parents: {
+        type: Array,
+        value: []
+    },
       has_children: {
         type: Boolean
     },
@@ -126,12 +130,15 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
           this.get_current_page();
       }
       else {
-          this.set('is_hierarchical', false);
+          this.set('has_parents', false);
+          this.set('has_children', false);
       }
 
   }
 
   get_current_page(){
+      /* Get data for the current page (and its family) from WP API */
+
       if (this.verbose) {
           console.log("Retrieving structure for page id", WP_POST_ID);
       }
@@ -149,7 +156,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
 
           // Get all parents (if any)
           if (response.parent != 0) {
-              element.set('has_parents', true);
+              element.get_parents(response.parent);
           }
           else {
               element.set('has_parents', false);
@@ -168,7 +175,26 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
   }
 
   get_parents(id){
-      /* Fetches parents of page */
+      /* Fetches all ancestors of a page. appends to parents property. */
+      let params = {"_fields": "title,id,link,parent"};
+      this.$.ajax_page.url = this.page_url(id);
+      this.$.ajax_page.params = params;
+      let page_request = this.$.ajax_page.generateRequest();
+      var element = this;
+      page_request.completes.then(function(req){
+          var response = req.response;
+          var parent = element._parse_page_item(response);
+          element.push('parents', parent)
+          if (response.parent == 0) {
+              element.notifyPath("parents");
+              element.set('has_parents', true);
+          }
+          else {
+              element.get_parents(response.parent)
+          }
+          }, function(rejected) {
+          }
+      )
   }
 
   _element_loaded_comp(all_menus_retrieved, is_hierarchical) {
@@ -179,16 +205,16 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
   }
   _element_loaded_obs(newValue, oldValue){
       /* Observer that fires when all api calls are completed after initial load */
-      if (newValue == 'undefined') {
+      if (typeof newValue == 'undefined') {
           return;
       }
       if (this.verbose) {
-          console.log(`Element is loaded?: ${newValue}`);
+          console.log('Element is loaded:', newValue);
       }
 
       // integrate current page into menu if possible
       // and set selected_menu property
-      this.notifyPath("current_page");
+      let menu_location = this._integrate_page_menu();
 
       // display menu if all sibling and parent children have been fetched
       // have a function that listens to changes in selected_menu
@@ -199,6 +225,62 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       // fire lookahead function
       // parent's grandchildren
       // sibling's grandchildren
+  }
+
+  _integrate_page_menu(){
+      /* Finds location of current page in menu (if possible) */
+      if (this.verbose) {
+          console.log("Integrating menu...");
+      }
+
+      this.notifyPath("current_page");
+      let menu_location = [-1];
+
+      // Construct object of flattened page ids/paths from menu
+      let flat_menu = {};
+      for (var i = 0; i < menu_data.length; i++) {
+          let link_obj = {};
+          link_obj['location'] = i;
+          link_obj['id'] = menu_data[i]['id'];
+          link_obj['path'] = menu_data[i]['path'];
+          link_obj['child_ids'] = menu_data[i].children.map(link=>link.id);
+          link_obj['child_paths'] = menu_data[i].children.map(link=>link.path);
+          flat_menu[menu_data[i]['path']];
+      }
+
+      // Library policies page is hierarchical but does not get an expand arrow
+      if (this.current_page.id == 3967) {
+          for (var i = 0; i < this.menu_data.length; i++) {
+              if ( this.menu_data[i]['id'] == this.current_page.id) {
+                  menu_location = [i];
+                  break;
+              }
+          }
+      }
+
+      // Integrate if a library under Visit section, which has custom logic and post type...
+      else if (WP_POST_TYPE == 'library') {
+          let v = flat_menu['/library/'];
+          for (var i = 0; i < v.children_ids.length; i++) {
+              if (v.children_ids[i] == WP_POST_ID) {
+                  menu_location = [v.id, i];
+                  break;
+              }
+          }
+      }
+
+
+      // Integrate hierarchical page tree into the menu_data property
+      else if (this.is_hierarchical) {
+
+      }
+
+      // Use main nav menu
+      else {
+
+      }
+
+      return menu_location
   }
 
   _is_hierarchical_obs(newValue, oldValue) {
@@ -258,7 +340,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
                           in_output = true;
                           break;
                       }
-                      else if ( output[i]['label'] == parent['label'] ) {
+                      else if ( output[i]['path'] == parent['path'] ) {
                           in_output = true;
                           break;
                       }
@@ -354,6 +436,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       output['id'] = item.object_id;
       output['object'] = item.object;
       output['link'] = item.url;
+      output['path'] = this._get_link_path(item.url);
       output['label'] = this._decodeHtml(item.title);
       output['order'] = item.menu_order;
       output['children'] = [];
@@ -368,8 +451,9 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       let output = {};
       output['id'] = item['id'];
       output['object'] = 'page';
-      output['label'] = item['title']['rendered']
+      output['label'] = this._decodeHtml(item['title']['rendered'])
       output['link'] = item['link'];
+      output['path'] = this._get_link_path(item.link);
       output['children'] = [];
       output['retrieved_children'] = false;
       output['link_style'] = "standard";
@@ -406,6 +490,16 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
           }
       }
       return i
+  }
+
+  _get_link_path(href){
+      /* Return a path, given a link. Used to match menu/page items. */
+      let l = document.createElement("a");
+      l.href = href;
+      if ( l.pathname.endsWith("/") == false ) {
+          l.pathname += "/"
+      }
+      return l.pathname;
   }
 
 
