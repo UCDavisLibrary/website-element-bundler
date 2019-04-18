@@ -23,6 +23,12 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       verbose: {
         type: Boolean
       },
+      element_loaded: {
+        type: Boolean,
+        value: false,
+        computed: "_element_loaded_comp(all_menus_retrieved, is_hierarchical)",
+        observer: "_element_loaded_obs"
+    },
       library_url: {
         type: String,
         value: "https://www.library.ucdavis.edu"
@@ -60,7 +66,8 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
         value: "2s"
     },
       menu_loaded: {
-        type: Boolean
+        type: Boolean,
+        value: false
     },
       menus_to_retrieve: {
         type: Object
@@ -77,9 +84,19 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
         type: Boolean,
         computed: "_all_menus_retrieved(menus_retrieved)"
     },
+      current_page: {
+        type: Object
+    },
+      has_parents: {
+        type: Boolean
+    },
+      has_children: {
+        type: Boolean
+    },
       is_hierarchical: {
         type: Boolean,
-        observer: "_is_hierarchical"
+        observer: "_is_hierarchical_obs",
+        computed: "_is_hierarchical_comp(has_children, has_parents)"
       }
 
     };
@@ -123,18 +140,19 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       let params = {"_fields": "title,id,link,parent"};
       this.$.ajax_page.url = this.page_url(WP_POST_ID);
       this.$.ajax_page.params = params;
-      let request = this.$.ajax_page.generateRequest();
+      let page_request = this.$.ajax_page.generateRequest();
       var element = this;
-      request.completes.then(function(req){
+
+      page_request.completes.then(function(req){
           var response = req.response;
-          output = element._parse_page_item(response);
+          var output = element._parse_page_item(response);
 
           // Get all parents (if any)
           if (response.parent != 0) {
-              this.set('is_hierarchical', true);
+              element.set('has_parents', true);
           }
           else {
-              this.set('is_hierarchical', false);
+              element.set('has_parents', false);
           }
 
           // Get all children (if any)
@@ -144,17 +162,66 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
           if (element.verbose) {
               console.log("Current page object:", output);
           }
-      }, function(rejected) {}
-    )
-
-
+      }, function(rejected) {
+      }
+  )
   }
 
-  _is_hierarchical(newValue, oldValue) {
+  get_parents(id){
+      /* Fetches parents of page */
+  }
+
+  _element_loaded_comp(all_menus_retrieved, is_hierarchical) {
+      /* Function for computing element_loaded property */
+      if ( (typeof is_hierarchical !== 'undefined') && all_menus_retrieved ) {
+          return true;
+      }
+  }
+  _element_loaded_obs(newValue, oldValue){
+      /* Observer that fires when all api calls are completed after initial load */
+      if (newValue == 'undefined') {
+          return;
+      }
+      if (this.verbose) {
+          console.log(`Element is loaded?: ${newValue}`);
+      }
+
+      // integrate current page into menu if possible
+      // and set selected_menu property
+      this.notifyPath("current_page");
+
+      // display menu if all sibling and parent children have been fetched
+      // have a function that listens to changes in selected_menu
+      // and checks that 1. parent's children are loaded
+      // and 2. siblings children and sets menu_loaded property
+      // this.set('menu_loaded', true); NOT HERE
+
+      // fire lookahead function
+      // parent's grandchildren
+      // sibling's grandchildren
+  }
+
+  _is_hierarchical_obs(newValue, oldValue) {
       /* Observer that fires depending on if the current page needs a menu */
       if (this.verbose) {
           console.log(`Current post (${WP_POST_ID}) hierarchy status:`, newValue);
+          console.log(`Has parent(s):`, this.has_parents);
+          console.log(`Has children:`, this.has_children);
       }
+  }
+
+  _is_hierarchical_comp(has_children, has_parents){
+      /* Computed function is_hierarchical property */
+      if ( (typeof has_children == 'undefined') || (typeof has_parents == 'undefined') ) {
+          return
+      }
+      if (has_children || has_parents) {
+          return true
+      }
+      else {
+          return false
+      }
+
   }
 
   get_wp_menu(menu) {
@@ -243,6 +310,14 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       var element = this;
       request.completes.then(function(req) {
           var response = req.response;
+          if ( id == WP_POST_ID ) {
+              if (response.length > 0) {
+                  element.set('has_children', true);
+              }
+              else {
+                  element.set('has_children', false)
+              }
+          }
           for (var page of response) {
               var page_filtered = element._parse_page_item(page);
               if (all_descendents) {
@@ -293,7 +368,8 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       let output = {};
       output['id'] = item['id'];
       output['object'] = 'page';
-      output['link'] = item['title']['rendered'];
+      output['label'] = item['title']['rendered']
+      output['link'] = item['link'];
       output['children'] = [];
       output['retrieved_children'] = false;
       output['link_style'] = "standard";
