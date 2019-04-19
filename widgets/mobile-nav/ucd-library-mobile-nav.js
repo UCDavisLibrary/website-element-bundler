@@ -169,6 +169,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
           if (element.verbose) {
               console.log("Current page object:", output);
           }
+          element.set("current_page", output);
       }, function(rejected) {
       }
   )
@@ -215,6 +216,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       // integrate current page into menu if possible
       // and set selected_menu property
       let menu_location = this._integrate_page_menu();
+      this.set_menu(menu_location);
 
       // display menu if all sibling and parent children have been fetched
       // have a function that listens to changes in selected_menu
@@ -234,22 +236,25 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       }
 
       this.notifyPath("current_page");
-      let menu_location = [-1];
+      var menu_location = [-1];
 
       // Construct object of flattened page ids/paths from menu
-      let flat_menu = {};
-      for (var i = 0; i < menu_data.length; i++) {
+      var flat_menu = {};
+      for (var i = 0; i < this.menu_data.length; i++) {
           let link_obj = {};
           link_obj['location'] = i;
-          link_obj['id'] = menu_data[i]['id'];
-          link_obj['path'] = menu_data[i]['path'];
-          link_obj['child_ids'] = menu_data[i].children.map(link=>link.id);
-          link_obj['child_paths'] = menu_data[i].children.map(link=>link.path);
-          flat_menu[menu_data[i]['path']];
+          link_obj['id'] = this.menu_data[i]['id'];
+          link_obj['path'] = this.menu_data[i]['path'];
+          link_obj['child_ids'] = this.menu_data[i].children.map(link=>link.id);
+          link_obj['child_paths'] =this.menu_data[i].children.map(link=>link.path);
+          flat_menu[this.menu_data[i]['path']] = link_obj;
       }
 
       // Library policies page is hierarchical but does not get an expand arrow
-      if (this.current_page.id == 3967) {
+      if (WP_POST_ID == 3967) {
+          if (this.verbose) {
+              console.log("page is library policy");
+          }
           for (var i = 0; i < this.menu_data.length; i++) {
               if ( this.menu_data[i]['id'] == this.current_page.id) {
                   menu_location = [i];
@@ -258,29 +263,137 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
           }
       }
 
-      // Integrate if a library under Visit section, which has custom logic and post type...
+      // Integrate if a library under Visit section, which has custom post type
       else if (WP_POST_TYPE == 'library') {
+          if (this.verbose) {
+              console.log("page is library");
+          }
           let v = flat_menu['/library/'];
-          for (var i = 0; i < v.children_ids.length; i++) {
-              if (v.children_ids[i] == WP_POST_ID) {
-                  menu_location = [v.id, i];
+          for (var i = 0; i < v.child_ids.length; i++) {
+              if (v.child_ids[i] == WP_POST_ID) {
+                  menu_location = [v.location, i];
                   break;
               }
           }
       }
 
-
       // Integrate hierarchical page tree into the menu_data property
       else if (this.is_hierarchical) {
 
+          // Check if page or its oldest ancestor is an existing menu item
+          let in_nav = false;
+          let page_match = this.current_page;
+          if (this.has_parents) {
+              page_match = this.parents.slice(-1)[0];
+          }
+          let h_menus = ['/about/', '/alumni-friends/', '/lang-prize/'];
+          if (h_menus.includes(page_match.path)) {
+              in_nav = true;
+          }
+
+          // Incorporate menu into nav
+          if (in_nav) {
+              if (this.verbose) {
+                  console.log("page is hierarchy and in nav");
+              }
+
+              // page is top level
+              if (h_menus.includes(this.current_page.path)) {
+                  menu_location = [flat_menu[page_match.path].location]
+                  return menu_location
+              }
+
+              // page is deep
+              let parent_ids = this.parents.map(parent => parent.id);
+              for (var i = 0; i < flat_menu[page_match.path].child_ids.length; i++) {
+                  let tier2_id = flat_menu[page_match.path].child_ids[i];
+                  menu_location = [flat_menu[page_match.path].location, i];
+
+                  // page is second level
+                  if (tier2_id == WP_POST_ID) {
+                      return menu_location
+                  }
+
+                  // page is beyond default limit of menu
+                  // NOT GETTING SET RIGHT. RESUME HERE
+                  if (parent_ids.includes(tier2_id)) {
+                      let flat_branch = this.parents.slice(0);
+                      flat_branch.reverse();
+                      flat_branch.push(this.current_page);
+                      flat_branch.splice(0, 2);
+                      let new_branch = this._nest_menu(flat_branch, this.current_page.children);
+                      let menu_path = `menu_data[${menu_location[0]}].children.`;
+                      menu_path += `[${menu_location[1]}].children`;
+                      this.set(menu_path, new_branch);
+                      this.notifyPath('menu_data');
+                      for (var i = 0; i < this.parents.length - 2; i++) {
+                          menu_location.push(0);
+                      }
+                      break;
+                  }
+              }
+
+
+          }
+
+          // Create new hidden menu branch
+          else {
+              if (this.verbose) {
+                  console.log("page is part of floating hierarchy");
+              }
+              let flat_branch = this.parents.slice(0);
+              flat_branch.reverse();
+              flat_branch.push(this.current_page);
+              let new_branch = this._nest_menu(flat_branch, this.current_page.children);
+
+              new_branch.link_style = 'menu_float';
+              menu_location = [this.menu_data.length];
+              for (parent of this.parents) {
+                  menu_location.push(0);
+              }
+              this.push('menu_data', new_branch);
+
+          }
+
       }
 
-      // Use main nav menu
-      else {
-
+      // Check if non hierarchical page is in main nav
+      else if (WP_POST_TYPE == 'page'){
+          if (this.verbose) {
+              console.log("Page is not hierarchical");
+          }
+          for (var i = 0; i < this.menu_data.length; i++) {
+              if (this.menu_data[i].path == this.current_page.path) {
+                  menu_location = [i];
+                  break;
+              }
+          }
       }
 
       return menu_location
+  }
+
+  set_menu(location, transition=false){
+      /* Checks if specified menu location is fetched and then sets current_menu prop*/
+      if (this.verbose) {
+          console.log("Attempting to set menu with location:", location);
+      }
+  }
+
+  _nest_menu(flat_branch, last_children=[]) {
+      /* Nests an array of links under the preceding's children property */
+      let new_branch = {}
+      for(let i = flat_branch.length - 1; i >= 0 ; i--){
+          if (i == flat_branch.length - 1) {
+              new_branch = flat_branch[i];
+              new_branch['children'] = last_children;
+          }
+          else {
+              flat_branch[i]['children'] = [new_branch];
+              new_branch = flat_branch[i]
+          }
+      }
+      return new_branch
   }
 
   _is_hierarchical_obs(newValue, oldValue) {
