@@ -65,6 +65,14 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
         type: String,
         value: "2s"
     },
+      _calls_needed: {
+        type: Number,
+        value: 0
+    },
+      _calls_made: {
+        type: Number,
+        value: 0
+    },
       menu_loaded: {
         type: Boolean,
         value: false
@@ -93,6 +101,9 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       parents: {
         type: Array,
         value: []
+    },
+      parents_loaded: {
+        type: Boolean
     },
       has_children: {
         type: Boolean
@@ -216,7 +227,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       // integrate current page into menu if possible
       // and set selected_menu property
       let menu_location = this._integrate_page_menu();
-      this.set_menu(menu_location);
+      this.queue_menu(menu_location);
 
       // display menu if all sibling and parent children have been fetched
       // have a function that listens to changes in selected_menu
@@ -245,7 +256,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
           link_obj['location'] = i;
           link_obj['id'] = this.menu_data[i]['id'];
           link_obj['path'] = this.menu_data[i]['path'];
-          link_obj['child_ids'] = this.menu_data[i].children.map(link=>link.id);
+          link_obj['child_ids'] = this.menu_data[i].children.map(link=>Number(link.id));
           link_obj['child_paths'] =this.menu_data[i].children.map(link=>link.path);
           flat_menu[this.menu_data[i]['path']] = link_obj;
       }
@@ -307,7 +318,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
               let parent_ids = this.parents.map(parent => parent.id);
               for (var i = 0; i < flat_menu[page_match.path].child_ids.length; i++) {
                   let tier2_id = flat_menu[page_match.path].child_ids[i];
-                  menu_location = [flat_menu[page_match.path].location, i];
+                  menu_location = [flat_menu[page_match.path].location];
 
                   // page is second level
                   if (tier2_id == WP_POST_ID) {
@@ -315,18 +326,18 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
                   }
 
                   // page is beyond default limit of menu
-                  // NOT GETTING SET RIGHT. RESUME HERE
                   if (parent_ids.includes(tier2_id)) {
+                      menu_location.push(i);
                       let flat_branch = this.parents.slice(0);
                       flat_branch.reverse();
                       flat_branch.push(this.current_page);
                       flat_branch.splice(0, 2);
                       let new_branch = this._nest_menu(flat_branch, this.current_page.children);
-                      let menu_path = `menu_data[${menu_location[0]}].children.`;
-                      menu_path += `[${menu_location[1]}].children`;
-                      this.set(menu_path, new_branch);
+                      let menu_path = `menu_data.${menu_location[0]}.children`;
+                      menu_path += `.${menu_location[1]}.children`;
+                      this.set(menu_path, [new_branch]);
                       this.notifyPath('menu_data');
-                      for (var i = 0; i < this.parents.length - 2; i++) {
+                      for (var i = 0; i < this.parents.length - 1; i++) {
                           menu_location.push(0);
                       }
                       break;
@@ -373,10 +384,53 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       return menu_location
   }
 
-  set_menu(location, transition=false){
-      /* Checks if specified menu location is fetched and then sets current_menu prop*/
+  queue_menu(obj_index, transition=false){
+      /* Sets 'next menu' property. Fires fetch requests if data object not complete. */
+
+      // Get url paths of location in case object index changes on fetch
+      let obj_paths = [];
+      for (var i = 1; i < obj_index.length + 1; i++) {
+          let getter = `menu_data`;
+          let obj_index_slice = obj_index.slice(0, i);
+          for (var ii = 0; ii < obj_index_slice.length; ii++ ) {
+              if (ii == obj_index_slice.length - 1) {
+                  getter += `.${obj_index_slice[ii]}.path`
+              }
+              else {
+                  getter += `.${obj_index_slice[ii]}.children`
+              }
+          }
+          obj_paths.push(this.get(getter))
+      }
+      let obj_location = {'index': obj_index, 'paths': obj_paths}
+      this.set('next_menu', {'location': obj_location});
       if (this.verbose) {
-          console.log("Attempting to set menu with location:", location);
+          console.log("Queuing menu with location:", obj_location);
+      }
+
+      // Reset fetch counters
+      this.set('_calls_needed', 0);
+      this.set('_calls_made', 0);
+
+      // ensure grandchildren of every level have been fetched (including self)
+      // loop object index and then slice, get full object
+      // check retrieved_children, loop children and check their status (if i doesnt equal next)
+      // needs reindex if retrieved children = false, but has children
+
+      if ( this._calls_needed == 0 ) {
+          // call display_menu(obj_location, transition)
+      }
+
+  }
+
+  _get_from_menu_data(obj_index, formatted=false){
+      /* Retrieves data from primary menu object given index array */
+
+      let getter = `menu_data`;
+      for (var i = 0; i < obj_index.length; i++) {
+          if (i == obj_index.length - 1) {
+              getter += `.${obj_index}`
+          }
       }
   }
 
