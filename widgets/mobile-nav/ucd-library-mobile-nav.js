@@ -65,13 +65,14 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
         type: String,
         value: "2s"
     },
-      _calls_needed: {
-        type: Number,
-        value: 0
+      _api_calls_needed: {
+        type: Object,
+        value: {}
     },
-      _calls_made: {
-        type: Number,
-        value: 0
+      _api_calls_made: {
+        type: Boolean,
+        value: true,
+        computed: "_api_calls_made_comp(_api_calls_needed)"
     },
       menu_loaded: {
         type: Boolean,
@@ -388,6 +389,8 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       /* Sets 'next menu' property. Fires fetch requests if data object not complete. */
 
       // Get url paths of location in case object index changes on fetch
+      // might not need to do this if make sort a computed function right before render
+      /*
       let obj_paths = [];
       for (var i = 1; i < obj_index.length + 1; i++) {
           let getter = `menu_data`;
@@ -403,24 +406,62 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
           obj_paths.push(this.get(getter))
       }
       let obj_location = {'index': obj_index, 'paths': obj_paths}
+      */
+      let obj_location = {'index': obj_index}
       this.set('next_menu', {'location': obj_location});
       if (this.verbose) {
           console.log("Queuing menu with location:", obj_location);
       }
 
-      // Reset fetch counters
-      this.set('_calls_needed', 0);
-      this.set('_calls_made', 0);
 
       // ensure grandchildren of every level have been fetched (including self)
       // loop object index and then slice, get full object
       // check retrieved_children, loop children and check their status (if i doesnt equal next)
       // needs reindex if retrieved children = false, but has children
 
-      if ( this._calls_needed == 0 ) {
+      // Make use children have been retrieved for all ancestors in selected menu
+      for (var i = 1; i < obj_index.length + 1; i++) {
+          let getter = `menu_data`;
+          let obj_index_slice = obj_index.slice(0, i);
+          for (var ii = 0; ii < obj_index_slice.length; ii++ ) {
+              if (ii == obj_index_slice.length - 1) {
+                  getter += `.${obj_index_slice[ii]}.`
+              }
+              else {
+                  getter += `.${obj_index_slice[ii]}.children`
+              }
+          }
+          let parent_status =  this.get(getter + "retrieved_children");
+          let parent_object = this.get(getter + "object");
+          if ( parent_status == false && parent_object == 'page') {
+              this.set("_api_calls_needed." + obj_index_slice.toString(), false);
+              this.get_page_descendents(this.get(getter + "id"), obj_index_slice, true);
+
+          }
+      }
+
+      if ( this._api_calls_made == true ) {
           // call display_menu(obj_location, transition)
       }
 
+  }
+
+  _api_calls_made_comp(_api_calls_needed){
+      /* Function that sets _api_calls_made property.
+      Returns true if all needed api calls have been made for the requested menu.
+      */
+      for (var key in this._api_calls_needed) {
+          if (object.hasOwnProperty(key)) {
+              if (this._api_calls_needed[key] == false) {
+                  return false
+              }
+          }
+      }
+      if (this.verbose) {
+          console.log("All page descendents api calls have been made.", this._api_calls_needed);
+      }
+
+      return true
   }
 
   _get_from_menu_data(obj_index, formatted=false){
@@ -515,12 +556,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
                   if (in_output == true) {
                       for (var child_link of child_response.items) {
                           let child_link_filtered = element._parse_menu_item(child_link);
-                          //if ((child_link_filtered.object == 'page') && (submenu != 'library-locations')) {
-                        //      child_link_filtered['children'] = element.get_page_descendents(child_link_filtered['id']);
-                        //      child_link_filtered['retrieved_children'] = true;
-                        //  }
-
-                          output[i]['children'].push(child_link_filtered)
+                          output[i]['children'].push(child_link_filtered);
                           output[i]['retrieved_children'] = true;
                       }
                   }
@@ -547,9 +583,13 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       }
   }
 
-  get_page_descendents(id, all_descendents=false){
+  get_page_descendents(id, menu_index=false, lookahead=false){
       /* Get children or all descendents of a page */
       let output = [];
+
+      if (this.verbose) {
+          console.log("Retrieving children for page", id, menu_index, lookahead);
+      }
 
       // Set up API query and make call
       let params = {"parent":id, "_fields": "title,id,link",
@@ -559,21 +599,63 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       var element = this;
       request.completes.then(function(req) {
           var response = req.response;
-          if ( id == WP_POST_ID ) {
+
+          for (var page of response) {
+              var page_filtered = element._parse_page_item(page);
+              output.push(page_filtered);
+          }
+
+          // Main data structure has already been constructed
+          if ( menu_index ) {
+              let getter = `menu_data`;
+              for (var ii = 0; ii < menu_index.length; ii++ ) {
+                  if (ii == menu_index.length - 1) {
+                      getter += `.${menu_index[ii]}.`
+                  }
+                  else {
+                      getter += `.${menu_index[ii]}.children`
+                  }
+              }
+              element.set(getter + "retrieved_children", true);
+              let existing_children = element.get(getter + "children");
+
+
+              for (var i = 0; i < output.length; i++) {
+
+                  // push children to existing menu object
+                  if (existing_children.length > 0) {
+                      if (output[i].id == existing_children[0].id) {
+                          continue
+                      }
+                  }
+                  element.push(getter + "children", output[i]);
+
+                  // get grandchildren
+                  if (lookahead) {
+                      let child_index = Array.from(menu_index);
+                      if (existing_children.length > 0) {
+                          child_index.push(i + 1)
+                      }
+                      else {
+                          child_index.push(i)
+                      }
+                      element.get_page_descendents(output[i].id, child_index, false);
+                  }
+
+              }
+              element.set("_api_calls_needed." + menu_index.toString(), true);
+              element.notifyPath("menu_data");
+              element.notifyPath("_api_calls_needed");
+          }
+
+          // Part of initial element set up
+          else if ( id == WP_POST_ID ) {
               if (response.length > 0) {
                   element.set('has_children', true);
               }
               else {
                   element.set('has_children', false)
               }
-          }
-          for (var page of response) {
-              var page_filtered = element._parse_page_item(page);
-              if (all_descendents) {
-                  page_filtered['children'] = element.get_page_descendents(page_filtered['id'], all_descendents);
-                  page_filtered['retrieved_children'] = true;
-              }
-              output.push(page_filtered);
           }
 
       }, function(rejected) {}
@@ -624,6 +706,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       output['children'] = [];
       output['retrieved_children'] = false;
       output['link_style'] = "standard";
+      output['order'] = 'read acf field';
 
       return output;
   }
