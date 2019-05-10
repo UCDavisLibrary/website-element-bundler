@@ -55,7 +55,8 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
     },
       selected_menu: {
         type: Object,
-        value: {}
+        value: {},
+        computed: "_selected_menu_comp(next_menu, _api_calls_made)"
     },
       next_menu: {
         type: Object,
@@ -312,6 +313,9 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
               // page is top level
               if (h_menus.includes(this.current_page.path)) {
                   menu_location = [flat_menu[page_match.path].location]
+                  if (this.verbose) {
+                      console.log("page is in top level nav");
+                  }
                   return menu_location
               }
 
@@ -323,11 +327,23 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
 
                   // page is second level
                   if (tier2_id == WP_POST_ID) {
-                      return menu_location
+                      if (this.verbose) {
+                          console.log("Page is in tier 2 of main nav.");
+                      }
+                      menu_location.push(i)
+                      let menu_path = `menu_data.${menu_location[0]}.children`;
+                      menu_path += `.${menu_location[1]}.`;
+                      this.set(menu_path + `children`, this.current_page.children);
+                      this.set(menu_path + `retrieved_children`, this.current_page.retrieved_children);
+                      this.notifyPath('menu_data');
+                      return menu_location;
                   }
 
                   // page is beyond default limit of menu
                   if (parent_ids.includes(tier2_id)) {
+                      if (this.verbose) {
+                          console.log("Page is beyond tier 2 of main nav.");
+                      }
                       menu_location.push(i);
                       let flat_branch = this.parents.slice(0);
                       flat_branch.reverse();
@@ -406,20 +422,18 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
           obj_paths.push(this.get(getter))
       }
       let obj_location = {'index': obj_index, 'paths': obj_paths}
-      */
       let obj_location = {'index': obj_index}
       this.set('next_menu', {'location': obj_location});
       if (this.verbose) {
           console.log("Queuing menu with location:", obj_location);
       }
+      */
+      if (this.verbose) {
+          console.log("Queuing menu with location:", obj_index);
+      }
 
-
-      // ensure grandchildren of every level have been fetched (including self)
-      // loop object index and then slice, get full object
-      // check retrieved_children, loop children and check their status (if i doesnt equal next)
-      // needs reindex if retrieved children = false, but has children
-
-      // Make use children have been retrieved for all ancestors in selected menu
+      // Make sure children have been retrieved for all ancestors in selected menu
+      // Fire lookaheads for grandchildren
       for (var i = 1; i < obj_index.length + 1; i++) {
           let getter = `menu_data`;
           let obj_index_slice = obj_index.slice(0, i);
@@ -433,17 +447,74 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
           }
           let parent_status =  this.get(getter + "retrieved_children");
           let parent_object = this.get(getter + "object");
+
           if ( parent_status == false && parent_object == 'page') {
               this.set("_api_calls_needed." + obj_index_slice.toString(), false);
-              this.get_page_descendents(this.get(getter + "id"), obj_index_slice, true);
+              this.notifyPath("_api_calls_needed");
 
+              // get children of ancestor, and grandchildren on delay
+              if (i < obj_index.length) {
+                  if (this.verbose) {
+                      console.log("Fetching children of parent", obj_index_slice);
+                  }
+                  this.get_page_descendents(this.get(getter + "id"), obj_index_slice, true);
+              }
+
+              // Get children and grandchildren of current page selection immediately
+              else {
+                  if (this.verbose) {
+                      console.log("Fetching children and grandchildren of current page selection", obj_index_slice);
+                  }
+                  this.get_page_descendents(this.get(getter + "id"), obj_index_slice, 'now');
+              }
           }
+          else if ( parent_status == true && parent_object == 'page' ) {
+              let parent_children = this.get(getter + "children");
+              for (var child_i = 0; child_i < parent_children.length; child_i++) {
+                  let child_id = parent_children[child_i]['id'];
+                  let child_slice = Array.from(obj_index_slice);
+                  child_slice.push(child_i);
+
+                  // get grandchildren of ancestors on a delay
+                   if (i < obj_index.length){
+                       if (this.verbose) {
+                           console.log("Scheduling fetch of ancestor grandchild", child_slice);
+                       }
+                       setTimeout(function(){
+                           this.get_page_descendents(child_id, child_slice, false);
+                       }, 2000);
+                   }
+
+                   // only display menu if granchildren of current selection have been retrieved
+                   // and get great grandchildren on delay
+                   else {
+                       if (this.verbose) {
+                           console.log("Fetching current page selection granchildren", child_slice);
+                       }
+                       this.set("_api_calls_needed." + child_slice.toString(), false);
+                       this.notifyPath("_api_calls_needed");
+                       this.get_page_descendents(child_id, child_slice, true);
+                   }
+
+              }
+          }
+
       }
 
-      if ( this._api_calls_made == true ) {
-          // call display_menu(obj_location, transition)
-      }
+      this.set('next_menu', {'location': obj_index, 'transition': transition});
 
+  }
+
+  _selected_menu_comp(next_menu, _api_calls_made) {
+      /* Constructs visibile menu object and fires CSS animations */
+      next_menu = this.next_menu;
+      _api_calls_made = this._api_calls_made
+      if (_api_calls_made == false || Object.keys(next_menu).length === 0) {
+          return {}
+      }
+      if (this.verbose) {
+          console.log("Ready to display menu", next_menu);
+      }
   }
 
   _api_calls_made_comp(_api_calls_needed){
@@ -451,7 +522,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       Returns true if all needed api calls have been made for the requested menu.
       */
       for (var key in this._api_calls_needed) {
-          if (object.hasOwnProperty(key)) {
+          if (this._api_calls_needed.hasOwnProperty(key)) {
               if (this._api_calls_needed[key] == false) {
                   return false
               }
@@ -588,7 +659,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       let output = [];
 
       if (this.verbose) {
-          console.log("Retrieving children for page", id, menu_index, lookahead);
+          console.log("Retrieving children for page", id, "of menu_index", menu_index, "Fetching grandchildren:", lookahead);
       }
 
       // Set up API query and make call
@@ -636,10 +707,19 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
                       if (existing_children.length > 0) {
                           child_index.push(i + 1)
                       }
-                      else {
+                      else if (existing_children.length == 0) {
                           child_index.push(i)
                       }
-                      element.get_page_descendents(output[i].id, child_index, false);
+                      if (lookahead == 'now') {
+                          element.set("_api_calls_needed." + child_index.toString(), false);
+                          element.get_page_descendents(output[i].id, child_index, false);
+                      }
+                      else {
+                          setTimeout(function(){
+                              element.get_page_descendents(output[i].id, child_index, false);
+                          }, 2000)
+                      }
+
                   }
 
               }
@@ -682,7 +762,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
   _parse_menu_item(item){
       /* Extract relevant data from a menu item */
       let output = {};
-      output['id'] = item.object_id;
+      output['id'] = Number(item.object_id);
       output['object'] = item.object;
       output['link'] = item.url;
       output['path'] = this._get_link_path(item.url);
@@ -698,7 +778,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
   _parse_page_item(item){
       /* Extract relevant data from a page item */
       let output = {};
-      output['id'] = item['id'];
+      output['id'] = Number(item['id']);
       output['object'] = 'page';
       output['label'] = this._decodeHtml(item['title']['rendered'])
       output['link'] = item['link'];
