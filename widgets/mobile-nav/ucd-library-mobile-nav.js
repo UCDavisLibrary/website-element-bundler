@@ -124,6 +124,17 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
   }
 
   ready(){
+      /* TODO:
+      Create field on pages to hide/order on menu. expose via api.
+      adjust fetch parse functions accordingly.
+      create function that sorts according to these values.
+
+
+      Make interface.
+      Construct selected_menu data object using _selected_menu_comp function.
+      Use queue_menu for user interaction.
+      */
+
       super.ready();
       if (this.verbose) {
         console.log("Mobile nav widget loaded.");
@@ -227,19 +238,9 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       }
 
       // integrate current page into menu if possible
-      // and set selected_menu property
+      // and ensure data object is complete to display menu for current page.
       let menu_location = this._integrate_page_menu();
       this.queue_menu(menu_location);
-
-      // display menu if all sibling and parent children have been fetched
-      // have a function that listens to changes in selected_menu
-      // and checks that 1. parent's children are loaded
-      // and 2. siblings children and sets menu_loaded property
-      // this.set('menu_loaded', true); NOT HERE
-
-      // fire lookahead function
-      // parent's grandchildren
-      // sibling's grandchildren
   }
 
   _integrate_page_menu(){
@@ -402,32 +403,11 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
   }
 
   queue_menu(obj_index, transition=false){
-      /* Sets 'next menu' property. Fires fetch requests if data object not complete. */
-
-      // Get url paths of location in case object index changes on fetch
-      // might not need to do this if make sort a computed function right before render
-      /*
-      let obj_paths = [];
-      for (var i = 1; i < obj_index.length + 1; i++) {
-          let getter = `menu_data`;
-          let obj_index_slice = obj_index.slice(0, i);
-          for (var ii = 0; ii < obj_index_slice.length; ii++ ) {
-              if (ii == obj_index_slice.length - 1) {
-                  getter += `.${obj_index_slice[ii]}.path`
-              }
-              else {
-                  getter += `.${obj_index_slice[ii]}.children`
-              }
-          }
-          obj_paths.push(this.get(getter))
-      }
-      let obj_location = {'index': obj_index, 'paths': obj_paths}
-      let obj_location = {'index': obj_index}
-      this.set('next_menu', {'location': obj_location});
-      if (this.verbose) {
-          console.log("Queuing menu with location:", obj_location);
-      }
+      /* Sets 'next menu' property if data object is complete using _selected_menu_comp function
+      Fires fetch requests if data object not complete.
+      Fires lookahead fetch requests, which are not required to display menu, but decrease future load time.
       */
+
       if (this.verbose) {
           console.log("Queuing menu with location:", obj_index);
       }
@@ -654,7 +634,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       }
   }
 
-  get_page_descendents(id, menu_index=false, lookahead=false){
+  get_page_descendents(id, menu_index=false, lookahead=false, notify=true){
       /* Get children or all descendents of a page */
       let output = [];
 
@@ -699,33 +679,32 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
                           continue
                       }
                   }
-                  element.push(getter + "children", output[i]);
+                  let data_i = element.push(getter + "children", output[i]) - 1;
 
                   // get grandchildren
                   if (lookahead) {
                       let child_index = Array.from(menu_index);
-                      if (existing_children.length > 0) {
-                          child_index.push(i + 1)
-                      }
-                      else if (existing_children.length == 0) {
-                          child_index.push(i)
-                      }
+                      let child_id = output[i].id
+                      child_index.push(data_i);
+
                       if (lookahead == 'now') {
                           element.set("_api_calls_needed." + child_index.toString(), false);
-                          element.get_page_descendents(output[i].id, child_index, false);
+                          element.get_page_descendents(child_id, child_index, false);
                       }
                       else {
                           setTimeout(function(){
-                              element.get_page_descendents(output[i].id, child_index, false);
+                              element.get_page_descendents(child_id, child_index, false, false);
                           }, 2000)
                       }
 
                   }
 
               }
-              element.set("_api_calls_needed." + menu_index.toString(), true);
               element.notifyPath("menu_data");
-              element.notifyPath("_api_calls_needed");
+              element.set("_api_calls_needed." + menu_index.toString(), true);
+              if (notify) {
+                  element.notifyPath("_api_calls_needed");
+              }
           }
 
           // Part of initial element set up
