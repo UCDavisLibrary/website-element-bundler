@@ -62,6 +62,10 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
         type: Object,
         value: {}
     },
+      trans_menu: {
+        type: Object,
+        value: {}
+    },
       animation_duration: {
         type: String,
         value: "2s"
@@ -277,6 +281,16 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
           }
       }
 
+      // page is a service
+      else if (WP_POST_TYPE == "service" || WP_POST_ID == 3858) {
+          for (var i = 0; i < this.menu_data.length; i++) {
+              if ( this.menu_data[i]['path'] == "/services/") {
+                  menu_location = [i];
+                  break;
+              }
+          }
+      }
+
       // Integrate if a library under Visit section, which has custom post type
       else if (WP_POST_TYPE == 'library') {
           if (this.verbose) {
@@ -407,9 +421,14 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       Fires fetch requests if data object not complete.
       Fires lookahead fetch requests, which are not required to display menu, but decrease future load time.
       */
-
+      var element = this;
       if (this.verbose) {
           console.log("Queuing menu with location:", obj_index);
+      }
+
+      if (obj_index.length == [-1]) {
+          this.set('next_menu', {'location': obj_index, 'transition': transition});
+          return
       }
 
       // Make sure children have been retrieved for all ancestors in selected menu
@@ -461,7 +480,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
                            console.log("Scheduling fetch of ancestor grandchild", child_slice);
                        }
                        setTimeout(function(){
-                           this.get_page_descendents(child_id, child_slice, false);
+                           element.get_page_descendents(child_id, child_slice, false, false);
                        }, 2000);
                    }
 
@@ -487,14 +506,92 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
 
   _selected_menu_comp(next_menu, _api_calls_made) {
       /* Constructs visibile menu object and fires CSS animations */
+
       next_menu = this.next_menu;
-      _api_calls_made = this._api_calls_made
+      _api_calls_made = this._api_calls_made;
+      let menu_items = []
       if (_api_calls_made == false || Object.keys(next_menu).length === 0) {
           return {}
       }
+
       if (this.verbose) {
           console.log("Ready to display menu", next_menu);
       }
+
+      // show top level menu
+      if (next_menu.location.length <= 1) {
+          menu_items = this.menu_data;
+          if (next_menu.location[0] > 0) {
+              menu_items[ next_menu.location[0] ].selected = true;
+          }
+          return {"breadcrumbs": [], "socialmedia": true, "main": menu_items}
+      }
+
+      // Get menu items
+      let getter = `menu_data`;
+      let siblings = [];
+      let parent = {};
+      let loc = next_menu.location;
+      for (var i = 0; i < loc.length; i++) {
+          if (i == loc.length - 1) {
+              parent = this.get(getter.slice(0, -9));
+              siblings = this.get(getter);
+              getter += `.${loc[i]}`
+          }
+          else {
+              getter += `.${loc[i]}.children`
+          }
+      }
+      let selected_children = this.get(getter + ".children");
+
+      console.log("selected_children", selected_children);
+      console.log("siblings", siblings);
+
+      // Show selected page as parent with children
+      if (selected_children.length > 0) {
+          menu_items.push( this.get(getter) );
+          menu_items[0].selected = true;
+          menu_items[0].link_style = 'parent';
+          menu_items = menu_items.concat(selected_children);
+      }
+
+      // Show selected page as sibling
+      else {
+          menu_items.push( parent );
+          menu_items[0].link_style = 'parent';
+          siblings[loc.slice(-1)]['selected'] = true;
+          menu_items = menu_items.concat(siblings);
+
+      }
+
+      // Get grandparents (breadcrumbs)
+      let breadcrumbs = [{"label": "Back to Main Menu", "link": "/", "link_style": "main_menu"}];
+      if (loc.length > 2) {
+          for (var i = 1; i < loc.length + 1; i++) {
+              let getter = `menu_data`;
+              let loc_slice = loc.slice(0, i);
+              for (var ii = 0; ii < loc_slice.length; ii++ ) {
+                  if (ii == loc_slice.length - 1) {
+                      getter += `.${loc_slice[ii]}`
+                  }
+                  else {
+                      getter += `.${loc_slice[ii]}.children`
+                  }
+              }
+
+              if (loc_slice.length == loc.length) {
+                  continue;
+              }
+              let breadcrumb = this.get(getter);
+              if (breadcrumb.path == menu_items[0].path) {
+                  continue;
+              }
+              breadcrumbs.push(breadcrumb)
+          }
+      }
+
+      return {"breadcrumbs": breadcrumbs, "socialmedia": false, "main": menu_items}
+
   }
 
   _api_calls_made_comp(_api_calls_needed){
@@ -614,7 +711,8 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
                   element.push("menus_retrieved", [menu, submenu]);
                   element.notifyPath("menus_retrieved");
 
-              }, function(rejected) {}
+              }, function(rejected) {
+              }
           )
           }
 
@@ -626,7 +724,9 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
               element.menu_data = element.menu_data.concat(output);
           }
 
-        }, function(rejected) {}
+        }, function(rejected) {
+            console.error("Unable to retrieve menus. Ensure Wordpress API Plugin extension is installed.");
+        }
       )
 
       if (element.verbose) {
@@ -689,6 +789,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
 
                       if (lookahead == 'now') {
                           element.set("_api_calls_needed." + child_index.toString(), false);
+                          element.notifyPath("_api_calls_needed");
                           element.get_page_descendents(child_id, child_index, false);
                       }
                       else {
@@ -701,8 +802,8 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
 
               }
               element.notifyPath("menu_data");
-              element.set("_api_calls_needed." + menu_index.toString(), true);
               if (notify) {
+                  element.set("_api_calls_needed." + menu_index.toString(), true);
                   element.notifyPath("_api_calls_needed");
               }
           }
@@ -750,6 +851,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       output['children'] = [];
       output['retrieved_children'] = false;
       output['link_style'] = "parent";
+      output['selected'] = false;
 
       return output;
   }
@@ -766,6 +868,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       output['retrieved_children'] = false;
       output['link_style'] = "standard";
       output['order'] = 'read acf field';
+      output['selected'] = false;
 
       return output;
   }
