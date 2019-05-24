@@ -3,6 +3,7 @@ import { MutableData } from '@polymer/polymer/lib/mixins/mutable-data.js';
 import "@ucd-lib/cork-app-utils/lib/Mixin.js"
 import '@polymer/polymer/lib/elements/dom-repeat.js';
 import '@polymer/iron-ajax/iron-ajax.js';
+import '@polymer/polymer/lib/elements/dom-if.js';
 //import '@polymer/iron-media-query/iron-media-query.js';
 import '@polymer/iron-pages/iron-pages.js';
 
@@ -18,6 +19,11 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       }
 
   static get is() { return 'ucd-library-mobile-nav'; }
+  static get observers() {
+      return [
+          '_selected_menu_comp(next_menu, _api_calls_made)'
+      ]
+  }
   static get properties() {
     return {
       verbose: {
@@ -28,10 +34,25 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
         value: false,
         computed: "_element_loaded_comp(all_menus_retrieved, is_hierarchical)",
         observer: "_element_loaded_obs"
-    },
+      },
       library_url: {
         type: String,
         value: "https://www.library.ucdavis.edu"
+      },
+      facebook: {
+        type: String
+      },
+      twitter: {
+        type: String
+      },
+      instagram: {
+        type: String
+      },
+      youtube: {
+        type: String
+      },
+      pinterest: {
+        type: String
       },
       api_base_url: {
         type: String,
@@ -55,8 +76,11 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
     },
       selected_menu: {
         type: Object,
-        value: {},
-        computed: "_selected_menu_comp(next_menu, _api_calls_made)"
+        value: {}
+    },
+      show_menu: {
+        type: Boolean,
+        value: false
     },
       next_menu: {
         type: Object,
@@ -132,11 +156,6 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       Create field on pages to hide/order on menu. expose via api.
       adjust fetch parse functions accordingly.
       create function that sorts according to these values.
-
-
-      Make interface.
-      Construct selected_menu data object using _selected_menu_comp function.
-      Use queue_menu for user interaction.
       */
 
       super.ready();
@@ -162,6 +181,17 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
           this.set('has_children', false);
       }
 
+  }
+
+  changeMenu(e){
+      /* Handles menu change clicks from user */
+      let array_loc = e.target.getAttribute('arrayloc').split(",");
+      array_loc = array_loc.map(e=>Number(e));
+      let transition = e.target.getAttribute('trans');
+      if (this.verbose) {
+          console.log(`Changing menu to: ${array_loc} with transition ${transition}`);
+      }
+      this.queue_menu(array_loc, transition)
   }
 
   get_current_page(){
@@ -417,7 +447,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
   }
 
   queue_menu(obj_index, transition=false){
-      /* Sets 'next menu' property if data object is complete using _selected_menu_comp function
+      /* Sets 'next menu' property if data object is complete using _selected_menu_comp observer
       Fires fetch requests if data object not complete.
       Fires lookahead fetch requests, which are not required to display menu, but decrease future load time.
       */
@@ -505,11 +535,14 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
   }
 
   _selected_menu_comp(next_menu, _api_calls_made) {
-      /* Constructs visibile menu object and fires CSS animations */
+      /* Observer for next_menu, _api_calls_made
+      Constructs and sets visibile menu object.
+      Fires CSS animations if necessary */
 
       next_menu = this.next_menu;
       _api_calls_made = this._api_calls_made;
       let menu_items = []
+      let selected_menu = {}
       if (_api_calls_made == false || Object.keys(next_menu).length === 0) {
           return {}
       }
@@ -518,39 +551,109 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
           console.log("Ready to display menu", next_menu);
       }
 
-      // show top level menu
+      // Handle non-deep menuing
       if (next_menu.location.length <= 1) {
+          let has_children = false;
           menu_items = this.menu_data;
-          if (next_menu.location[0] > 0) {
-              menu_items[ next_menu.location[0] ].selected = true;
+          for (var i = 0; i < menu_items.length; i++) {
+              if (i == next_menu.location[0] ) {
+                  menu_items[i].selected = true;
+                  if (menu_items[i].children.length > 0) {
+                      has_children = true;
+                  }
+              }
+              if (menu_items[i].children.length > 0) {
+                  menu_items[i].has_children = true;
+              }
+              menu_items[i]['array_loc'] = i;
           }
-          return {"breadcrumbs": [], "socialmedia": true, "main": menu_items}
+
+          // show second level menu
+          if (has_children) {
+              let breadcrumbs = [{"label": "Back to Main Menu", "link": "/", "link_style": "parent", "array_loc": "-1", "mm_link": true}];
+              let children = menu_items[next_menu.location[0]].children;
+              let array_loc = [next_menu.location[0]];
+              for (var i = 0; i < children.length; i++) {
+                  children[i].array_loc = array_loc.concat([i]).toString();
+                  if (children[i].children.length > 0) {
+                      children[i].has_children = true;
+                  }
+                  else {
+                      children[i].has_children = false;
+                  }
+                  children[i].link_style = 'standard';
+              }
+              let ms = [];
+              ms.push(menu_items[next_menu.location[0]]);
+              ms = ms.concat(children);
+              ms[0].has_children = false;
+              ms[0].link_style = "parent";
+              ms[0].array_loc = array_loc;
+              selected_menu = {"breadcrumbs": breadcrumbs, "socialmedia": false, "main": ms};
+              this.set('selected_menu', selected_menu);
+              this.notifyPath('selected_menu');
+              this.set('show_menu', true);
+              if (this.verbose) {
+                  console.log("Selected menu object constructed:", selected_menu);
+              }
+              this.notifyPath('show_menu');
+              return;
+          }
+
+          // show top level menu
+          else {
+              selected_menu = {"breadcrumbs": [], "socialmedia": true, "main": menu_items};
+              this.set('selected_menu', selected_menu);
+              this.notifyPath('selected_menu');
+              this.set('show_menu', true);
+              if (this.verbose) {
+                  console.log("Selected menu object constructed:", selected_menu);
+              }
+              this.notifyPath('show_menu');
+              return
+          }
       }
 
-      // Get menu items
+      // construct a deep menu
       let getter = `menu_data`;
       let siblings = [];
       let parent = {};
+      let array_loc = [];
       let loc = next_menu.location;
       for (var i = 0; i < loc.length; i++) {
           if (i == loc.length - 1) {
               parent = this.get(getter.slice(0, -9));
+              parent.array_loc = array_loc.toString();
               siblings = this.get(getter);
-              getter += `.${loc[i]}`
+              for (var ii = 0; ii < siblings.length; ii++) {
+                  siblings[ii].array_loc = array_loc.concat([ii]).toString();
+                  if (siblings[ii].children.length > 0) {
+                     siblings[ii].has_children = true;
+                  }
+                  else {
+                     siblings[ii].has_children = false;
+                  }
+              }
+              getter += `.${loc[i]}`;
           }
           else {
-              getter += `.${loc[i]}.children`
+              getter += `.${loc[i]}.children`;
           }
+          array_loc.push(loc[i]);
       }
       let selected_children = this.get(getter + ".children");
-
-      console.log("selected_children", selected_children);
-      console.log("siblings", siblings);
+      for (var ii = 0; ii < selected_children.length; ii++) {
+          selected_children[ii].array_loc = array_loc.concat([ii]).toString();
+          if (selected_children[ii].children.length > 0) {
+              selected_children[ii].has_children = true;
+          }
+      }
 
       // Show selected page as parent with children
       if (selected_children.length > 0) {
           menu_items.push( this.get(getter) );
           menu_items[0].selected = true;
+          menu_items[0].has_children = false;
           menu_items[0].link_style = 'parent';
           menu_items = menu_items.concat(selected_children);
       }
@@ -565,8 +668,8 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       }
 
       // Get grandparents (breadcrumbs)
-      let breadcrumbs = [{"label": "Back to Main Menu", "link": "/", "link_style": "main_menu"}];
-      if (loc.length > 2) {
+      let breadcrumbs = [{"label": "Back to Main Menu", "link": "/", "link_style": "parent", "array_loc": "-1", "mm_link": true}];
+      if (loc.length > 1) {
           for (var i = 1; i < loc.length + 1; i++) {
               let getter = `menu_data`;
               let loc_slice = loc.slice(0, i);
@@ -586,11 +689,21 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
               if (breadcrumb.path == menu_items[0].path) {
                   continue;
               }
+              breadcrumb.array_loc = loc_slice.toString();
+              breadcrumb.mm_link = false;
+              breadcrumb.link_style = 'standard';
               breadcrumbs.push(breadcrumb)
           }
       }
-
-      return {"breadcrumbs": breadcrumbs, "socialmedia": false, "main": menu_items}
+      selected_menu = {"breadcrumbs": breadcrumbs, "socialmedia": false, "main": menu_items};
+      this.set('selected_menu', selected_menu);
+      this.notifyPath('selected_menu');
+      this.set('show_menu', true);
+      if (this.verbose) {
+          console.log("Selected menu object constructed:", selected_menu);
+      }
+      this.notifyPath('show_menu');
+      return
 
   }
 
@@ -598,15 +711,17 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       /* Function that sets _api_calls_made property.
       Returns true if all needed api calls have been made for the requested menu.
       */
-      for (var key in this._api_calls_needed) {
-          if (this._api_calls_needed.hasOwnProperty(key)) {
-              if (this._api_calls_needed[key] == false) {
+      _api_calls_needed = this._api_calls_needed;
+      for (var key in _api_calls_needed) {
+          if (_api_calls_needed.hasOwnProperty(key)) {
+              if (_api_calls_needed[key] == false) {
+                  this.set('show_menu', false);
                   return false
               }
           }
       }
       if (this.verbose) {
-          console.log("All page descendents api calls have been made.", this._api_calls_needed);
+          console.log("All page descendents api calls have been made.", _api_calls_needed);
       }
 
       return true
@@ -675,7 +790,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
           for (var link of response.items) {
               let link_filtered = element._parse_menu_item(link);
               if (menu == 'info') {
-                  link_filtered['link_style']  = "menu_info";
+                  link_filtered['link_style']  = "menu-info";
               }
               output.push(link_filtered);
           }
