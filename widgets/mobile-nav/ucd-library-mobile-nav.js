@@ -497,12 +497,20 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
                   this.get_page_descendents(this.get(getter + "id"), obj_index_slice, 'now');
               }
           }
-          else if ( parent_status == true && parent_object == 'page' ) {
+          else if ( parent_status == true ) {
               let parent_children = this.get(getter + "children");
               for (var child_i = 0; child_i < parent_children.length; child_i++) {
+                  let child_object = parent_children[child_i]['object'];
+                  if (child_object != 'page') {
+                      continue;
+                  }
                   let child_id = parent_children[child_i]['id'];
                   let child_slice = Array.from(obj_index_slice);
+                  let child_status = parent_children[child_i]['retrieved_children'];
                   child_slice.push(child_i);
+                  if (child_status) {
+                      continue;
+                  }
 
                   // get grandchildren of ancestors on a delay
                    if (i < obj_index.length){
@@ -554,13 +562,16 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       // Handle non-deep menuing
       if (next_menu.location.length <= 1) {
           let has_children = false;
-          menu_items = this.menu_data;
+          menu_items = JSON.parse(JSON.stringify(this.menu_data));
           for (var i = 0; i < menu_items.length; i++) {
               if (i == next_menu.location[0] ) {
                   menu_items[i].selected = true;
                   if (menu_items[i].children.length > 0) {
                       has_children = true;
                   }
+              }
+              else {
+                  menu_items[i].selected = false;
               }
               if (menu_items[i].children.length > 0) {
                   menu_items[i].has_children = true;
@@ -588,7 +599,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
               ms = ms.concat(children);
               ms[0].has_children = false;
               ms[0].link_style = "parent";
-              ms[0].array_loc = array_loc;
+              ms[0].array_loc = array_loc.toString();
               selected_menu = {"breadcrumbs": breadcrumbs, "socialmedia": false, "main": ms};
               this.set('selected_menu', selected_menu);
               this.notifyPath('selected_menu');
@@ -623,10 +634,13 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       for (var i = 0; i < loc.length; i++) {
           if (i == loc.length - 1) {
               parent = this.get(getter.slice(0, -9));
+              parent = JSON.parse(JSON.stringify(parent));
               parent.array_loc = array_loc.toString();
               siblings = this.get(getter);
+              siblings = JSON.parse(JSON.stringify(siblings));
               for (var ii = 0; ii < siblings.length; ii++) {
                   siblings[ii].array_loc = array_loc.concat([ii]).toString();
+                  siblings[ii].selected = false;
                   if (siblings[ii].children.length > 0) {
                      siblings[ii].has_children = true;
                   }
@@ -642,6 +656,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
           array_loc.push(loc[i]);
       }
       let selected_children = this.get(getter + ".children");
+      selected_children = JSON.parse(JSON.stringify(selected_children));
       for (var ii = 0; ii < selected_children.length; ii++) {
           selected_children[ii].array_loc = array_loc.concat([ii]).toString();
           if (selected_children[ii].children.length > 0) {
@@ -651,7 +666,9 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
 
       // Show selected page as parent with children
       if (selected_children.length > 0) {
-          menu_items.push( this.get(getter) );
+          let ch = this.get(getter);
+          ch = JSON.parse(JSON.stringify(ch));
+          menu_items.push( ch );
           menu_items[0].selected = true;
           menu_items[0].has_children = false;
           menu_items[0].link_style = 'parent';
@@ -686,6 +703,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
                   continue;
               }
               let breadcrumb = this.get(getter);
+              breadcrumb = JSON.parse(JSON.stringify(breadcrumb));
               if (breadcrumb.path == menu_items[0].path) {
                   continue;
               }

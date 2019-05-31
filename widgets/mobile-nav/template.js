@@ -23,7 +23,7 @@ export default /* @html */`
     <template is="dom-repeat" items = "[[selected_menu.breadcrumbs]]" as="breadcrumb">
         <div on-click="changeMenu" trans="breadcrumb" arrayloc$="[[breadcrumb.array_loc]]" linkstyle$="[[breadcrumb.link_style]]" class="mnav-link">
             <template is="dom-if" if="{{breadcrumb.mm_link}}">
-                <i class="cork-chevron left small" style="vertical-align: text-bottom;"></i>
+                <i class="cork-chevron left small"></i>
             </template>
             <template is="dom-if" if="{{!breadcrumb.mm_link}}">
                 <i class="fa fa-level-up"></i>
@@ -39,7 +39,7 @@ export default /* @html */`
         <div linkstyle$="[[menu_link.link_style]]" linkselected$="[[menu_link.selected]]" class="mnav-link">
             <a href="{{ menu_link.link }}" linkselected$="[[menu_link.selected]]" class="mnav-text"><div>[[menu_link.label]]</div></a>
             <template is="dom-if" if="{{menu_link.has_children}}">
-                <i on-click="changeMenu" arrayloc$="[[menu_link.array_loc]]" trans="children" class="cork-chevron right small" style="vertical-align: text-bottom;"></i>
+                <i on-click="changeMenu" arrayloc$="[[menu_link.array_loc]]" trans="children" class="cork-chevron right small"></i>
             </template>
         </div>
     </template>
@@ -68,7 +68,8 @@ export default /* @html */`
 
 </template>
 <template is="dom-if" if="{{!show_menu}}">
-    <i class="fa fa-spin"></i>
-    Placeholder for a spinning wheel of death.
+    <div id="nav_loading">
+    <i class="fa fa-spinner fa-pulse"></i>
+    </div>
 </template>
 `
