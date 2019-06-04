@@ -80,6 +80,14 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
     },
       show_menu: {
         type: Boolean,
+        value: true
+    },
+      show_transition: {
+        type: Boolean,
+        value: true
+    },
+      show_spinner: {
+        type: Boolean,
         value: false
     },
       next_menu: {
@@ -181,6 +189,32 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
           this.set('has_children', false);
       }
 
+      // init listener for animation
+      var element = this;
+      this.set('show_spinner', false);
+      this.set('show_transition', true);
+      setTimeout(function(){
+          element.querySelector('#mnav-transition').addEventListener('animationend', function(e){
+              if (element.verbose) {
+                  console.log("Menu animation ended.");
+              }
+              element.querySelector('#mnav-transition').classList.remove("slideright");
+              let m = JSON.parse(JSON.stringify(element.get('trans_menu')));
+              element.set('selected_menu', m);
+              element.notifyPath('selected_menu');
+              element.set('show_menu', false);
+              element.notifyPath('show_menu');
+              element.set('show_transition', false);
+              element.notifyPath('show_transition');
+          }, false)
+          element.set('show_transition', false);
+          element.set('show_spinner', true);
+      }, 2000);
+
+
+
+
+
   }
 
   changeMenu(e){
@@ -274,7 +308,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       // integrate current page into menu if possible
       // and ensure data object is complete to display menu for current page.
       let menu_location = this._integrate_page_menu();
-      this.queue_menu(menu_location);
+      this.queue_menu(menu_location, "slideright");
   }
 
   _integrate_page_menu(){
@@ -548,6 +582,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       Fires CSS animations if necessary */
 
       next_menu = this.next_menu;
+      let transition = next_menu.transition;
       _api_calls_made = this._api_calls_made;
       let menu_items = []
       let selected_menu = {}
@@ -601,26 +636,36 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
               ms[0].link_style = "parent";
               ms[0].array_loc = array_loc.toString();
               selected_menu = {"breadcrumbs": breadcrumbs, "socialmedia": false, "main": ms};
-              this.set('selected_menu', selected_menu);
-              this.notifyPath('selected_menu');
-              this.set('show_menu', true);
+              //this.set('selected_menu', selected_menu);
+              //this.notifyPath('selected_menu');
+              this.set('trans_menu', selected_menu);
+              this.notifyPath('trans_menu');
+              this.set('show_spinner', false);
+              this.notifyPath('show_spinner');
+              this.set('show_transition', true);
+              this.notifyPath('show_transition');
+              this.querySelector('#mnav-transition').classList.add(transition);
               if (this.verbose) {
                   console.log("Selected menu object constructed:", selected_menu);
               }
-              this.notifyPath('show_menu');
               return;
           }
 
           // show top level menu
           else {
               selected_menu = {"breadcrumbs": [], "socialmedia": true, "main": menu_items};
-              this.set('selected_menu', selected_menu);
-              this.notifyPath('selected_menu');
-              this.set('show_menu', true);
+              // this.set('selected_menu', selected_menu);
+              // this.notifyPath('selected_menu');
+              this.set('trans_menu', selected_menu);
+              this.notifyPath('trans_menu');
+              this.set('show_spinner', false);
+              this.notifyPath('show_spinner');
               if (this.verbose) {
                   console.log("Selected menu object constructed:", selected_menu);
               }
-              this.notifyPath('show_menu');
+              this.set('show_transition', true);
+              this.notifyPath('show_transition');
+              this.querySelector('#mnav-transition').classList.add(transition);
               return
           }
       }
@@ -714,13 +759,18 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
           }
       }
       selected_menu = {"breadcrumbs": breadcrumbs, "socialmedia": false, "main": menu_items};
-      this.set('selected_menu', selected_menu);
-      this.notifyPath('selected_menu');
-      this.set('show_menu', true);
+      // this.set('selected_menu', selected_menu);
+      // this.notifyPath('selected_menu');
+      this.set('trans_menu', selected_menu);
+      this.notifyPath('trans_menu');
+      this.set('show_spinner', false);
+      this.notifyPath('show_spinner');
+      this.set('show_transition', true);
+      this.notifyPath('show_transition');
+      this.querySelector('#mnav-transition').classList.add(transition);
       if (this.verbose) {
           console.log("Selected menu object constructed:", selected_menu);
       }
-      this.notifyPath('show_menu');
       return
 
   }
@@ -733,7 +783,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       for (var key in _api_calls_needed) {
           if (_api_calls_needed.hasOwnProperty(key)) {
               if (_api_calls_needed[key] == false) {
-                  this.set('show_menu', false);
+                  this.set('show_spinner', true);
                   return false
               }
           }

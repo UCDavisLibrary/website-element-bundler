@@ -12,6 +12,26 @@ export default /* @css */`
         color: #ffffff;
         text-decoration: none;
     }
+    ucd-library-mobile-nav  #mnav-transition {
+        position: fixed;
+        width: 100%;
+        left: 0;
+        top: 111px;
+    }
+    .slideright {
+        animation-duration: 1s;
+        animation-name: slidein;
+    }
+    @keyframes slidein {
+        from {
+            margin-left: 100%;
+            width: 300%;
+        }
+        to {
+            margin-left: 0%;
+            width: 100%;
+        }
+    }
     ucd-library-mobile-nav #nav_loading {
         width: 100%;
         height: calc(100vh - 90px);
@@ -24,31 +44,31 @@ export default /* @css */`
         background-color: inherit;
         color: #ffffff;
     }
-    ucd-library-mobile-nav #mnav-breadcrumbs {
+    ucd-library-mobile-nav .mnav-breadcrumbs {
 	    background-color: #335379;
     }
-    ucd-library-mobile-nav #mnav-breadcrumbs div[linkstyle=parent]{
+    ucd-library-mobile-nav .mnav-breadcrumbs div[linkstyle=parent]{
     	padding-left:8px;
         padding-bottom: 13px;
         padding-top: 8px;
     }
-    ucd-library-mobile-nav #mnav-breadcrumbs div[linkstyle=standard]{
+    ucd-library-mobile-nav .mnav-breadcrumbs div[linkstyle=standard]{
     	padding-left:50px;
         padding-bottom: 13px;
     }
-    ucd-library-mobile-nav #mnav-breadcrumbs div[linkstyle=standard] i {
+    ucd-library-mobile-nav .mnav-breadcrumbs div[linkstyle=standard] i {
         color: #dAAA00;
         -webkit-transform: scaleX(-1);
         transform: scaleX(-1);
         margin-right: 7px;
     }
-    ucd-library-mobile-nav #mnav-breadcrumbs .mnav-text {
+    ucd-library-mobile-nav .mnav-breadcrumbs .mnav-text {
         pointer-events: none;
     }
-    ucd-library-mobile-nav #mnav-breadcrumbs i {
+    ucd-library-mobile-nav .mnav-breadcrumbs i {
         pointer-events: none;
     }
-    ucd-library-mobile-nav #mnav-breadcrumbs div[linkstyle=parent] i {
+    ucd-library-mobile-nav .mnav-breadcrumbs div[linkstyle=parent] i {
         vertical-align: middle;
         background-color: #002655;
         border-radius: 50%;
@@ -60,18 +80,18 @@ export default /* @css */`
         margin-right: 7px;
         color: #dAAA00;
     }
-    ucd-library-mobile-nav #mnav-main div[linkselected]{
+    ucd-library-mobile-nav .mnav-main div[linkselected]{
     	color:#dAAA00;
     }
-    ucd-library-mobile-nav #mnav-main a[linkselected]{
+    ucd-library-mobile-nav .mnav-main a[linkselected]{
         color:#dAAA00;
     }
-    ucd-library-mobile-nav #mnav-main div[linkstyle=parent]{
+    ucd-library-mobile-nav .mnav-main div[linkstyle=parent]{
     	padding-left:15px;
     	text-transform: uppercase;
         padding-bottom: 15px;
     }
-    ucd-library-mobile-nav #mnav-main i {
+    ucd-library-mobile-nav .mnav-main i {
         vertical-align: middle;
         background-color: #335379;
         border-radius: 50%;
@@ -89,7 +109,7 @@ export default /* @css */`
         height: 8px;
         background-color: #002655;
     }
-    ucd-library-mobile-nav #mnav-main div[linkstyle=parent].mnav-spacer::after {
+    ucd-library-mobile-nav .mnav-main div[linkstyle=parent].mnav-spacer::after {
         content: "";
         background-color: #335379;
         height: 1px;
@@ -97,19 +117,19 @@ export default /* @css */`
         display: block;
     }
 
-    ucd-library-mobile-nav #mnav-main div[linkstyle=standard]{
+    ucd-library-mobile-nav .mnav-main div[linkstyle=standard]{
         padding-bottom: 15px;
     }
-    ucd-library-mobile-nav #mnav-main div[linkstyle=standard].mnav-spacer {
+    ucd-library-mobile-nav .mnav-main div[linkstyle=standard].mnav-spacer {
         display: block;
         width: 100%;
         height: 8px;
         background-color: #002655;
     }
-    ucd-library-mobile-nav #mnav-main div[linkstyle=standard] .mnav-text {
+    ucd-library-mobile-nav .mnav-main div[linkstyle=standard] .mnav-text {
         padding-left:30px;
     }
-    ucd-library-mobile-nav #mnav-main div[linkstyle=standard].mnav-spacer::after {
+    ucd-library-mobile-nav .mnav-main div[linkstyle=standard].mnav-spacer::after {
         content: "";
         background-color: #335379;
         height: 1px;
@@ -118,23 +138,23 @@ export default /* @css */`
         margin-left: 30px;
     }
 
-    ucd-library-mobile-nav #mnav-main div[linkstyle=menu-info]{
+    ucd-library-mobile-nav .mnav-main div[linkstyle=menu-info]{
         background-color: #335379;
         padding-bottom: 9px;
     }
-    ucd-library-mobile-nav #mnav-main div[linkstyle=menu-info] .mnav-text{
+    ucd-library-mobile-nav .mnav-main div[linkstyle=menu-info] .mnav-text{
         padding-left: 15px;
     }
-    ucd-library-mobile-nav #mnav-main div[linkstyle=menu-info] i {
+    ucd-library-mobile-nav .mnav-main div[linkstyle=menu-info] i {
         background-color: #002655;
     }
-    ucd-library-mobile-nav #mnav-main div[linkstyle=menu-info].mnav-spacer {
+    ucd-library-mobile-nav .mnav-main div[linkstyle=menu-info].mnav-spacer {
         display: block;
         width: 100%;
         height: 14px;
         background-color: #335379;
     }
-    ucd-library-mobile-nav #mnav-main div[linkstyle="menu-info"].mnav-spacer::after {
+    ucd-library-mobile-nav .mnav-main div[linkstyle="menu-info"].mnav-spacer::after {
         content: "";
         background-color: #002655;
         height: 1px;
