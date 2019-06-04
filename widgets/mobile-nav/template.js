@@ -24,7 +24,7 @@ export default /* @html */`
     <div id="mnav-window">
         <div class="mnav-breadcrumbs">
         <template is="dom-repeat" items = "[[selected_menu.breadcrumbs]]" as="breadcrumb">
-            <div on-click="changeMenu" trans="slideright" arrayloc$="[[breadcrumb.array_loc]]" linkstyle$="[[breadcrumb.link_style]]" class="mnav-link">
+            <div on-click="changeMenu" trans="slidedown" arrayloc$="[[breadcrumb.array_loc]]" linkstyle$="[[breadcrumb.link_style]]" class="mnav-link">
                 <template is="dom-if" if="{{breadcrumb.mm_link}}">
                     <i class="cork-chevron left small"></i>
                 </template>
@@ -47,8 +47,9 @@ export default /* @html */`
             </div>
         </template>
         </div>
-
-        ${social}
+        <template is="dom-if" if="{{selected_menu.socialmedia}}">
+            ${social}
+        </template>
 
     </div>
     </template>
@@ -57,7 +58,7 @@ export default /* @html */`
     <div id="mnav-transition">
         <div class="mnav-breadcrumbs">
         <template is="dom-repeat" items = "[[trans_menu.breadcrumbs]]" as="breadcrumb">
-            <div on-click="changeMenu" trans="slideright" arrayloc$="[[breadcrumb.array_loc]]" linkstyle$="[[breadcrumb.link_style]]" class="mnav-link">
+            <div on-click="changeMenu" trans="slidedown" arrayloc$="[[breadcrumb.array_loc]]" linkstyle$="[[breadcrumb.link_style]]" class="mnav-link">
                 <template is="dom-if" if="{{breadcrumb.mm_link}}">
                     <i class="cork-chevron left small"></i>
                 </template>
@@ -81,7 +82,9 @@ export default /* @html */`
         </template>
         </div>
 
-        ${social}
+        <template is="dom-if" if="{{trans_menu.socialmedia}}">
+            ${social}
+        </template>
     </div>
     </template>
 

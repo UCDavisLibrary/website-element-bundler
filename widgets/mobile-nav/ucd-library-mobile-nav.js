@@ -133,6 +133,9 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       current_page: {
         type: Object
     },
+      entry_point: {
+        type: Object
+    },
       has_parents: {
         type: Boolean
     },
@@ -199,13 +202,16 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
                   console.log("Menu animation ended.");
               }
               element.querySelector('#mnav-transition').classList.remove("slideright");
+              element.querySelector('#mnav-transition').classList.remove("slidedown");
               let m = JSON.parse(JSON.stringify(element.get('trans_menu')));
               element.set('selected_menu', m);
               element.notifyPath('selected_menu');
-              element.set('show_menu', false);
+              element.set('show_menu', true);
               element.notifyPath('show_menu');
-              element.set('show_transition', false);
-              element.notifyPath('show_transition');
+               setTimeout(function(){
+                   element.set('show_transition', false);
+                   element.notifyPath('show_transition');
+               }, 200);
           }, false)
           element.set('show_transition', false);
           element.set('show_spinner', true);
@@ -308,7 +314,8 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       // integrate current page into menu if possible
       // and ensure data object is complete to display menu for current page.
       let menu_location = this._integrate_page_menu();
-      this.queue_menu(menu_location, "slideright");
+      this.set('entry_point', menu_location);
+      this.queue_menu(menu_location, "slidedown");
   }
 
   _integrate_page_menu(){
@@ -453,7 +460,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
               flat_branch.push(this.current_page);
               let new_branch = this._nest_menu(flat_branch, this.current_page.children);
 
-              new_branch.link_style = 'menu_float';
+              new_branch.link_style = 'hidden';
               menu_location = [this.menu_data.length];
               for (parent of this.parents) {
                   menu_location.push(0);
@@ -887,6 +894,9 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
                   if (in_output == true) {
                       for (var child_link of child_response.items) {
                           let child_link_filtered = element._parse_menu_item(child_link);
+                          if (child_response.slug == 'library-locations') {
+                              child_link_filtered['retrieved_children'] = true;
+                          }
                           output[i]['children'].push(child_link_filtered);
                           output[i]['retrieved_children'] = true;
                       }

@@ -13,16 +13,19 @@ export default /* @css */`
         text-decoration: none;
     }
     ucd-library-mobile-nav  #mnav-transition {
-        position: fixed;
+        position: absolute;
         width: 100%;
         left: 0;
         top: 111px;
+        background-color: #002655;
+        height: 100%;
     }
     .slideright {
-        animation-duration: 1s;
-        animation-name: slidein;
+        animation-duration: .75s;
+        animation-timing-function: ease;
+        animation-name: slideright;
     }
-    @keyframes slidein {
+    @keyframes slideright {
         from {
             margin-left: 100%;
             width: 300%;
@@ -32,6 +35,20 @@ export default /* @css */`
             width: 100%;
         }
     }
+    .slidedown  {
+        animation-duration: .75s;
+        animation-timing-function: ease;
+        animation-name: slidedown;
+    }
+    @keyframes slidedown {
+        0% {
+            transform: translateY(-100%);
+        }
+        100% {
+            transform: translateY(0%);
+        }
+    }
+
     ucd-library-mobile-nav #nav_loading {
         width: 100%;
         height: calc(100vh - 90px);
@@ -85,6 +102,9 @@ export default /* @css */`
     }
     ucd-library-mobile-nav .mnav-main a[linkselected]{
         color:#dAAA00;
+    }
+    ucd-library-mobile-nav .mnav-main div[linkstyle=hidden]{
+        display: none !important;
     }
     ucd-library-mobile-nav .mnav-main div[linkstyle=parent]{
     	padding-left:15px;
