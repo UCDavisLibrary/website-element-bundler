@@ -56,6 +56,11 @@ export default /* @html */`
 
     <template is="dom-if" if="{{show_transition}}">
     <div id="mnav-transition">
+        <template is="dom-if" if="{{show_spinner_init}}">
+            <div class="nav_loading">
+            <i class="fa fa-spinner fa-pulse"></i>
+            </div>
+        </template>
         <div class="mnav-breadcrumbs">
         <template is="dom-repeat" items = "[[trans_menu.breadcrumbs]]" as="breadcrumb">
             <div on-click="changeMenu" trans="slidedown" arrayloc$="[[breadcrumb.array_loc]]" linkstyle$="[[breadcrumb.link_style]]" class="mnav-link">
@@ -90,7 +95,7 @@ export default /* @html */`
 
 </template>
 <template is="dom-if" if="{{show_spinner}}">
-    <div id="nav_loading">
+    <div class="nav_loading">
     <i class="fa fa-spinner fa-pulse"></i>
     </div>
 </template>

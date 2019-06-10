@@ -90,6 +90,10 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
         type: Boolean,
         value: false
     },
+      show_spinner_init: {
+        type: Boolean,
+        value: true
+    },
       next_menu: {
         type: Object,
         value: {}
@@ -134,7 +138,7 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
         type: Object
     },
       entry_point: {
-        type: Object
+        type: Array
     },
       has_parents: {
         type: Boolean
@@ -158,9 +162,6 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
     };
   }
 
-  constructor() {
-      super();
-  }
 
   ready(){
       /* TODO:
@@ -173,6 +174,11 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
       if (this.verbose) {
         console.log("Mobile nav widget loaded.");
       }
+
+  }
+
+  construct_base_menu() {
+      // Initializes the base library menu object.
 
       // Retrieve official wp menus
       let menus = {'main-nav':['library-locations', 'alumni-and-friends', 'about'],
@@ -214,13 +220,9 @@ class UCDLibraryMobileNav extends Mixin(PolymerElement)
                }, 200);
           }, false)
           element.set('show_transition', false);
+          element.set('show_spinner_init', false);
           element.set('show_spinner', true);
       }, 2000);
-
-
-
-
-
   }
 
   changeMenu(e){

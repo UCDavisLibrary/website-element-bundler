@@ -49,14 +49,14 @@ export default /* @css */`
         }
     }
 
-    ucd-library-mobile-nav #nav_loading {
+    ucd-library-mobile-nav .nav_loading {
         width: 100%;
         height: calc(100vh - 90px);
         display: flex;
         justify-content: center;
         align-items: center;
     }
-    ucd-library-mobile-nav #nav_loading i {
+    ucd-library-mobile-nav .nav_loading i {
         font-size: 40px;
         background-color: inherit;
         color: #ffffff;
