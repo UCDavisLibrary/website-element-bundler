@@ -16,7 +16,7 @@ yarn install
 
 # Adding a New Widget
 
- - To add a new widget create a new folder in ./widgets 
+ - To add a new widget create a new folder in ./widgets
  - Add all widget (yarn or npm) modules to the root ./widgets
  - Edit [webpack-widgets.js](./webpack-widgets.js) and add a pointer to the widgets entry point
 
@@ -32,7 +32,7 @@ To generate a dist build, run `npm run dist`.  This will generate *.bundle.js an
 
 Copy over the [/dist/lib](./dist/lib) folder to the websites [wp-content/themes/ucd-lib/html/dist](https://github.com/UCDavisLibrary/ucd-lib/tree/master/wp-content/themes/ucd-lib/html/dist) folder (you can wipe and replace).  
 
-Important! update the ```CUSTOM_ELEMENT_VERSION``` version number in [element-loader.twig](https://github.com/UCDavisLibrary/ucd-lib/blob/master/wp-content/themes/ucd-lib/views/includes/element-loader.twig) in the main library website twig code.  This will ensure that when elements are deployed to the website the cache is blown away.
+Important! Update ```$version``` in the [WP Enqueue class](https://github.com/UCDavisLibrary/ucd-lib/blob/master/wp-content/themes/ucd-lib/classes/enqueue.php) in the main library repo which sets the ```CUSTOM_ELEMENT_VERSION``` version number in [element-loader.twig](https://github.com/UCDavisLibrary/ucd-lib/blob/master/wp-content/themes/ucd-lib/views/includes/element-loader.twig).  This will ensure that when elements are deployed to the website the cache is blown away.
 
 Now test on the website.
 

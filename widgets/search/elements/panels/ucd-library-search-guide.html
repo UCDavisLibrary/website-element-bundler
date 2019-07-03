@@ -1,4 +1,17 @@
-<div class="text">
+<style>
+  /*hack for website layout */
+
+  @media(max-width: 900px) {
+    .ucd-library-search-guide .weight-one {
+      display: block;
+    }
+    .ucd-library-search-guide .weight-one.break {
+      display: none;
+    }
+  }
+</style>
+
+<div class="text ucd-library-search-guide">
   <h1 class="title">Subject and Course Guides</h1>
   <div class="help">Find article databases, ebooks, handbooks, properties and other resources by academic subject.</div>
 
@@ -11,8 +24,8 @@
     </div>
   </div>
   <div style="padding: 5px 0">
-    <a href="/course-guides" type="course" on-click="_onBrowse">All Course Guides</a> | 
-    <a href="/browse-subjects" type="subject" on-click="_onBrowse">All Subject Guides</a>
+    <a href="/course-guides" type="course" on-click="_onBrowse" class="weight-one">All Course Guides</a>
+    <span class="weight-one break">&nbsp;|&nbsp;</span>
+    <a href="/browse-subjects" type="subject" on-click="_onBrowse" class="weight-one">All Subject Guides</a>
   </div>
 </div>
-

@@ -84,57 +84,65 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
             </div>
         </div>
 
-        <div id="month_container">
-        <div class="month_nav_left">
+        <div id="month_container" aria-label="Select a day from calendar below to view library hours for that date">
+        <div class="month_nav_left" role="button" aria-label="View Previous Month">
             <i class="cork-chevron left gold" alt="past" on-click="change_month" style="cursor:pointer;"></i>
         </div>
             <template is="dom-repeat" items="{{month_array}}" as="month">
-                <div id="{{month.order}}">
+                <div id="{{month.order}}" role="table" aria-label="Calendar month">
                     <span class="title details-text" style="text-transform:none;">[[month.label]]</span>
-                    <div class="cal-row">
-                        <div class="col-header"><div class="day-text">S</div></div>
-                        <div class="col-header"><div class="day-text">M</div></div>
-                        <div class="col-header"><div class="day-text">T</div></div>
-                        <div class="col-header"><div class="day-text">W</div></div>
-                        <div class="col-header"><div class="day-text">T</div></div>
-                        <div class="col-header"><div class="day-text">F</div></div>
-                        <div class="col-header"><div class="day-text">S</div></div>
+                    <div class="cal-row" role="row">
+                        <div class="col-header" role="columnheader"><div class="day-text">S</div></div>
+                        <div class="col-header" role="columnheader"><div class="day-text">M</div></div>
+                        <div class="col-header" role="columnheader"><div class="day-text">T</div></div>
+                        <div class="col-header" role="columnheader"><div class="day-text">W</div></div>
+                        <div class="col-header" role="columnheader"><div class="day-text">T</div></div>
+                        <div class="col-header" role="columnheader"><div class="day-text">F</div></div>
+                        <div class="col-header" role="columnheader"><div class="day-text">S</div></div>
                     </div>
                     <template is="dom-repeat" items="{{month.data}}" as="week">
-                        <div class="cal-row">
+                        <div class="cal-row" role="row">
                         <template is="dom-repeat" items="{{week}}" as="day">
-                            <div locweek$= "[[day.loc_week]]" locday$= "[[day.loc_day]]" class$="[[day.is_today]] cal-day [[day.is_exception]] {{day.is_selected}} [[day.month_status]]" on-click="display_new_week">
-                                <div class$="[[day.month_status]] day-text" day$="[[day.date_json]]">[[day.day]]</div>
+                            <div locweek$= "[[day.loc_week]]"
+                                locday$= "[[day.loc_day]]"
+                                class$="[[day.is_today]] cal-day [[day.is_exception]] {{day.is_selected}} [[day.month_status]]"
+                                on-click="display_new_week"
+                                role="cell">
+                                <div class$="[[day.month_status]] day-text"
+                                    day$="[[day.date_json]]"
+                                    role="button">[[day.day]]</div>
                             </div>
                         </template>
                         </div>
                     </template>
                 </div>
             </template>
-            <div class="month_nav_right">
+            <div class="month_nav_right" role="button" aria-label="View Next Month">
                 <i class="cork-chevron right gold" alt="future" on-click="change_month" style="cursor:pointer;"></i>
             </div>
         </div>
 
         <div id="view_desktop">
-        <div class="hours-table">
-            <div class="hours-tr">
-            <div class="hours-th"><h4 style="margin-bottom:0px;">[[_format_header(week_array)]]</h4></div>
+        <div class="hours-table" role="table" aria-label="Hours table for week containing the selected day">
+            <div class="hours-tr" role="row">
+            <div class="hours-th" role="columnheader"><h4 style="margin-bottom:0px;">[[_format_header(week_array)]]</h4></div>
             <template is="dom-repeat" items="{{week_array}}">
                 <div class$="[[item.is_today]] hours-th"style="line-height: 18px;"><h4>[[item.day_str]]</h4>
                 <span class="details-text" style="text-transform:none;">[[item.month_str]] [[item.day]]</span></div>
             </template>
             </div>
             <template is="dom-repeat" items="{{hours_this_week}}" sort=sort_hours>
-            <div class="hours-tr">
-                <div class="hours-td">
+            <div class="hours-tr" role="row">
+                <div class="hours-td" role="rowheader">
                     <a class$="[[item.type]]" href$=[[item.url]]>
                     <img  class="status-icon" src$=[[item.icon_url]] alt$=[[item.status]]>
                     [[item.title]]
                     </a>
                 </div>
                 <template is="dom-repeat" items="{{item.hours}}" as="hours">
-                    <div class$="[[hours.hours.status]] [[hours.is_today]] hours-td">
+                    <div class$="[[hours.hours.status]] [[hours.is_today]] hours-td role="cell""
+                        aria-label$="Hours for [[item.title]] on [[hours.date.month_str]] [[hours.date.day]], [[hours.date.year]]"
+                        >
                         <span class="keep-together">[[hours.display_string.open]]</span>
                         <span class="keep-together">[[hours.display_string.close]]</span>
                     </div>
@@ -144,7 +152,7 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
         </div>
         </div>
 
-        <div id="view_tablet">
+        <div id="view_tablet" aria-label="Hours for week containing the selected day">
         <template is="dom-repeat" items="{{hours_this_week}}" sort=sort_hours>
             <a class$="[[item.type]]" href$=[[item.url]]>
             <img  class="status-icon" src$=[[item.icon_url]] alt$=[[item.status]]>
@@ -159,7 +167,9 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
                 </div>
                 <div class="hours-tr">
                     <template is="dom-repeat" items="{{item.hours}}" as="hours">
-                        <div class$="[[hours.hours.status]] [[hours.is_today]] hours-td">
+                        <div class$="[[hours.hours.status]] [[hours.is_today]] hours-td"
+                            aria-label$="Hours for [[item.title]] on [[hours.date.month_str]] [[hours.date.day]], [[hours.date.year]]"
+                        >
                             <span class="keep-together">[[hours.display_string.open]]</span>
                             <span class="keep-together">[[hours.display_string.close]]</span>
                         </div>
@@ -169,7 +179,7 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
         </template>
         </div>
 
-        <div id="view_mobile">
+        <div id="view_mobile" aria-label="Hours for week containing the selected day">
         <hr>
         <template is="dom-repeat" items="{{hours_this_week}}" sort=sort_hours>
             <a class$="[[item.type]]" href$=[[item.url]]>
@@ -178,7 +188,9 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
             </a>
             <div hidden="hidden" class="hours-table" id="[[_concat_id(item.id, 'table')]]">
             <template is="dom-repeat" items="{{item.hours}}" as="hours">
-                <div class$="[[hours.is_today]] hours-tr">
+                <div class$="[[hours.is_today]] hours-tr"
+                    aria-label$="Hours for [[item.title]] on date:"
+                >
                     <div style="width:40%;" class="hours-td"><strong>[[hours.date.day_str]]</strong> [[hours.date.month_str]] [[hours.date.day]]
                     </div>
                     <div style="width:60%;" class$="[[hours.hours.status]] hours-td">
@@ -831,6 +843,10 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
           return {'open': 'CLOSED', 'close': ""};
       }
 
+      if (data.tbd) {
+          return {'open': 'TBD', 'close': ""};
+      }
+
      var display_dict = {};
       var day_arr = [data.start_time, data.end_time];
       for (var i = 0; i < 2; i++){
@@ -954,6 +970,7 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
                   hours['end_time'] = calendar['rule'][cal_id]['end_time'];
                   hours['exception'] = false;
                   hours['status'] = 'open';
+                  hours['tbd'] = calendar['rule'][cal_id]['tbd'];
                   return hours;
               }
           }
@@ -1009,9 +1026,10 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
                                                'freq': 'WEEKLY'
                                                'days': ['MO', 'TU', 'WE', TH, 'FR']
                                                'start_time': '07:30:00-8:00'
-                                               'end_time': '00:00:00-8:00'
+                                               'end_time': '00:00:00-8:00',
+                                               'tbd': true // if all events in recurring series do not have set hours
                                               }
-               }
+               },
        'overlap': false // true if two reoccurring series overlap
        'exceptions' {'2018-06-05': {'start_time': '07:30:00-8:00'
                                     'end_time': '00:00:00-8:00'
@@ -1059,6 +1077,13 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
                       event_rule['end_time'] = "00:00";
                   }
 
+                  if (event_description.includes('tbd')) {
+                      event_rule['tbd'] = true;
+                  }
+                  else {
+                      event_rule['tbd'] = false;
+                  }
+
 
                   cal_data['id'].push(event_id);
                   cal_data['name'][event_id] = event_name;
@@ -1104,12 +1129,17 @@ class LibraryHoursWeek extends Mixin(PolymerElement)
                   exc_date_times['start_time'] = this.split_datetime(events[i]['start']['dateTime'])['time'];
                   exc_date_times['status'] = 'open';
                   exc_date_times['exception'] = true;
+                  exc_date_times['tbd'] = false;
 
                   // verify hours are actually different
                   // Google doesn't allow user to undo an exception
                   var rule_start = cal_data['rule'][events[i]['recurringEventId']]['start_time'];
                   var rule_end = cal_data['rule'][events[i]['recurringEventId']]['end_time'];
-                  if ( rule_start != exc_date_times['start_time'] || rule_end != exc_date_times['end_time'] ) {
+                  if (events[i]['description'].includes('TBD')) {
+                      exc_date_times['tbd'] = true;
+                      cal_data['exceptions'][exc_date] = exc_date_times;
+                  }
+                  else if ( rule_start != exc_date_times['start_time'] || rule_end != exc_date_times['end_time'] ) {
                       cal_data['exceptions'][exc_date] = exc_date_times;
                   }
 
