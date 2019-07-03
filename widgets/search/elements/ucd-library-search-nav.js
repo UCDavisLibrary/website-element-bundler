@@ -40,13 +40,21 @@ class UCDLibrarySearchNav extends Mixin(PolymerElement)
   ready() {
     super.ready();
     this._resetBtns();
+  }
 
-    let selected = this.querySelector('button[value="'+this.selected+'"]');
+  /**
+   * @method initBtn
+   * @description rendering order and initialization order of selected button is a pain.
+   * Parent will manually set init state of buttons via this method. 
+   * 
+   * @param {String} selected name of button to select
+   */
+  initBtn(selected) {
+    selected = this.querySelector('button[value="'+this.selected+'"]');
     if( selected ) {
       selected.classList.add('selected');
     }
-    
-    this.$.selector.value = this.selected;
+    this.$.selector.value = selected;
   }
 
   _onSizeUpdate() {
@@ -54,6 +62,7 @@ class UCDLibrarySearchNav extends Mixin(PolymerElement)
   }
 
   _select(e) {
+    console.log(e);
     this._resetBtns();
     this.selected = e.currentTarget.value || e.currentTarget.getAttribute('value');
     this.querySelector('button[value="'+this.selected+'"]').classList.add('selected');

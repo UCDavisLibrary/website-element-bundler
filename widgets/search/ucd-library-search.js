@@ -66,6 +66,8 @@ class UCDLibrarySearch extends Mixin(PolymerElement)
     } else if( nav ) {
       this.section = nav;
     }
+
+    this.$.nav.initBtn(this.section);
   }
   
   _setValues(text) {
