@@ -58,6 +58,7 @@ class UCDLibrarySearchNav extends Mixin(PolymerElement)
     this.$.selector.value = selected;
     selected = this.querySelector('option[value="'+this.selected+'"]');
     if( selected ) {
+      selected.selected = 'selected'; // for FF
       selected.setAttribute('selected', 'selected');
     }
   }
