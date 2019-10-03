@@ -7,7 +7,7 @@ library-hours {
 }
 
 library-hours .hours-table{
-    border-bottom: none;
+    border-top: none;
     border-collapse: collapse;
     margin-bottom: 0px;
     width: 100%;
@@ -22,8 +22,8 @@ library-hours .hours-tr {
 }
 
 library-hours .hours-td {
-    border-bottom: none;
-    border-top: 1px solid #d8d8d8;
+    border-top: none;
+    border-bottom: 1px solid #d8d8d8;
     padding-left: 0px;
     padding-right: 0px;
     padding-bottom: 8px;
