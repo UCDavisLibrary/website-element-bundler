@@ -28,20 +28,6 @@ class LibraryHours extends Mixin(PolymerElement)
         debounce-duration="300"></iron-ajax>
     </template>
 
-        <div>
-            <div class="link-see-all-top clearfix">
-                <div class="float-xs-left">
-                    <h2 style="padding-right:5px;">Library Hours Today</h2>
-                </div>
-                <div class="float-xs-right" style="margin-top:8px;">
-                    <a href$="[[see_all]]" class="bold-link">See All
-                        <i class="cork-chevron right small gold" style="vertical-align: text-bottom;"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="spacer"></div>
-        </div>
-
         <div class="hours-table">
             <template is="dom-repeat" items="{{hours_today}}" sort=sort_hours>
                 <div class="hours-tr">
@@ -88,10 +74,6 @@ class LibraryHours extends Mixin(PolymerElement)
       },
       json_path: {
         type: String,
-      },
-      see_all: {
-        type: String,
-        value: "",
       },
       verbose: {
           type:Boolean,
