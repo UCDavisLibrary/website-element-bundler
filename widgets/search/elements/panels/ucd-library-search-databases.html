@@ -4,6 +4,7 @@
     display: flex;
     align-items: flex-start;
     flex-wrap: wrap;
+    padding-bottom: 10px;
   }
 
   .ucd-library-search-databases .popular > * {
@@ -19,11 +20,15 @@
     display: flex;
     align-items: flex-start;
     white-space: nowrap;
+    justify-content: flex-end;
     font-weight: var(--default-font-weight);
   }
 
   .ucd-library-search-databases .break {
     margin: 0 10px;
+  }
+  .ucd-library-search .ucd-library-search-databases .help {
+    padding-bottom: 5px;
   }
 
   @media( max-width: 600px ) {
@@ -37,7 +42,7 @@
       display: none;
     }
     .ucd-library-search-databases .popular {
-      margin-top: 10px;
+      margin-top: 5px;
       margin-left: 0;
     }
   }
@@ -47,6 +52,14 @@
   <div class="text" flat$="[[flat]]">
     <h1 class="title">Databases</h1>
     <div class="help">Find databases for scholarly articles, newspapers, popular literature, properties, statistics, images, dissertations and more.</div>
+    <div class="popular">
+      <div>Popular:</div>
+      <template is="dom-repeat" items="[[databases]]">
+          <div>
+            <a href$="[[item.url]]" on-click="setOutboundEvent">[[item.label]]</a><span last-child$="[[item.last]]">,</span>
+          </div>
+      </template>
+    </div>
 
     <div class="layout">
       <div class="flex">
@@ -59,16 +72,10 @@
   </div>
 
   <div flat$="[[flat]]" class="bottom">
-    <div><a href="/database/">Browse A-Z</a></div>
+    <div><a href="/database/">Advanced Search</a></div>
     <div class="break">|</div>
+    <div><a href="/database/">Browse A-Z</a></div>
 
-    <div class="popular">
-      <div>Popular:</div>
-      <template is="dom-repeat" items="[[databases]]">
-          <div>
-            <a href$="[[item.url]]" on-click="setOutboundEvent">[[item.label]]</a><span last-child$="[[item.last]]">,</span>
-          </div>
-      </template>
-    </div>
+
   </div>
 </div>

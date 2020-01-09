@@ -16,4 +16,7 @@ if( window.elementBundles ) {
   if( window.elementBundles.indexOf('hours-single') > -1 ) {
     import(/* webpackChunkName: "hours-single" */ './widgets/hours-single/library-hours-single.js');
   }
+  if( window.elementBundles.indexOf('search-db') > -1 ) {
+    import(/* webpackChunkName: "search-db" */ './widgets/search-db/search-db.js');
+  }
 }
