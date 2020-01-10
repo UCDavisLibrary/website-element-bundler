@@ -139,43 +139,26 @@ class LibrarySearchDB extends Mixin(PolymerElement)
 
   submit_query(){
     /* Constructs query string from object and redirects traffic */
-    var a = false;
+
     if (this.query['s'] == "") {
-      var send_traffic_to = this.library_url + "/database/?";
+      var send_traffic_to = this.library_url + "/database/?az=all";
     }
     else {
-      var send_traffic_to = this.library_url + "/?post_type=database";
+      var send_traffic_to = this.library_url + "/?post_type=database&az=all";
       send_traffic_to += "&s=" + encodeURIComponent(this.query['s']);
-      a = true;
     }
 
     if (this.query['dbmaterial'] != "any") {
-        if (a) {
-          send_traffic_to += "&"
-        }
-        a = true;
-        send_traffic_to += "dbmaterial=" + encodeURIComponent(this.query['dbmaterial']);
+      send_traffic_to += "&dbmaterial=" + encodeURIComponent(this.query['dbmaterial']);
     }
     if (this.query['dbsubject'] != "any") {
-        if (a) {
-          send_traffic_to += "&"
-        }
-        a = true;
-        send_traffic_to += "dbsubject=" + encodeURIComponent(this.query['dbsubject']);
+      send_traffic_to += "&dbsubject=" + encodeURIComponent(this.query['dbsubject']);
     }
     if (this.query['everyone'] == false) {
-        if (a) {
-          send_traffic_to += "&"
-        }
-        a = true;
-        send_traffic_to += "everyone=false";
+      send_traffic_to += "&everyone=false";
     }
     if (this.query['vpn'] == false) {
-        if (a) {
-          send_traffic_to += "&"
-        }
-        a = true;
-        send_traffic_to += "vpn=false";
+      send_traffic_to += "&vpn=false";
     }
     if ( this.verbose ) {
         console.log(send_traffic_to);
